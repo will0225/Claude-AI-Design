@@ -10,6 +10,18 @@ Forensic **Standard Review** reports and proposals with a fixed template every t
 3. brand/output/*.html  →  Print → PDF
 ```
 
+**Official style guide applied:** `brand/HAM_Report_Style_Guide.pdf`
+
+| Color | Hex |
+|-------|-----|
+| Teal | `#184C4C` |
+| Bronze | `#9C7B4D` |
+| Ink | `#1A2731` |
+| Paper | `#FBF9F5` |
+| Critical / High / Medium | `#8F2018` / `#A23A2C` / `#C79A3E` |
+
+Fonts: **Newsreader** (display) · **Public Sans** (body) · **IBM Plex Mono** (numerics)
+
 ## Claude Design import (MCP)
 
 Your Design page project is configured in `brand.config.example.yaml`:

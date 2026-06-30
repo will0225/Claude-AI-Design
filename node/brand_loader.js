@@ -182,11 +182,12 @@ export function buildStylesheet(config) {
   const { colors, fonts } = config;
   const replacements = {
     "{{PRIMARY}}": colors.primary,
-    "{{SECONDARY}}": colors.secondary,
+    "{{SECONDARY}}": colors.secondary ?? colors.primary,
     "{{ACCENT}}": colors.accent,
-    "{{CRITICAL}}": colors.critical ?? "#c53030",
-    "{{HIGH}}": colors.high ?? "#dd6b20",
-    "{{MEDIUM}}": colors.medium ?? "#d69e2e",
+    "{{CRITICAL}}": colors.critical ?? "#8F2018",
+    "{{HIGH}}": colors.high ?? "#A23A2C",
+    "{{MEDIUM}}": colors.medium ?? "#C79A3E",
+    "{{POSITIVE}}": colors.positive ?? "#3C7350",
     "{{TEXT}}": colors.text,
     "{{TEXT_LIGHT}}": colors.text_light,
     "{{BACKGROUND}}": colors.background,
@@ -194,8 +195,10 @@ export function buildStylesheet(config) {
     "{{BORDER}}": colors.border,
     "{{HEADING_FONT}}": fonts.heading,
     "{{BODY_FONT}}": fonts.body,
+    "{{MONO_FONT}}": fonts.mono ?? "IBM Plex Mono",
     "{{HEADING_FONT_URL}}": fonts.heading_url ?? "",
     "{{BODY_FONT_URL}}": fonts.body_url ?? "",
+    "{{MONO_FONT_URL}}": fonts.mono_url ?? "",
   };
   for (const [token, value] of Object.entries(replacements)) {
     css = css.split(token).join(value);

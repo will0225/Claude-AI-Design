@@ -4,6 +4,9 @@
 .env.*.local
 brand/brand.config.yaml
 
+# Style guide renders (generated from PDF for extraction)
+brand/style-guide-page-*.png
+
 # Generated documents
 brand/output/*.html
 

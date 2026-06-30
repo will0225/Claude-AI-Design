@@ -117,21 +117,22 @@ COMPANY
   phone: {c.get('contact_phone', '')}
   license: {c.get('license', '')}
 
-COLORS (exact hex — CSS must use these values)
-  primary:    {colors['primary']}
-  secondary:  {colors['secondary']}
-  accent:     {colors['accent']}
-  critical:   {colors.get('critical', '#c53030')}
-  high:       {colors.get('high', '#dd6b20')}
-  medium:     {colors.get('medium', '#d69e2e')}
-  text:       {colors['text']}
-  background: {colors['background']}
-  surface:    {colors['surface']}
-  border:     {colors['border']}
+COLORS (exact hex — HAM Report Style Guide v1)
+  teal/primary: {colors['primary']}
+  bronze/accent: {colors['accent']}
+  ink/text:     {colors['text']}
+  muted:        {colors['text_light']}
+  paper/bg:     {colors['background']}
+  cream/surface:{colors['surface']}
+  critical:     {colors.get('critical', '#8F2018')}
+  high:         {colors.get('high', '#A23A2C')}
+  medium:       {colors.get('medium', '#C79A3E')}
+  positive:     {colors.get('positive', '#3C7350')}
 
 FONTS (exact font-family names)
-  headings: {fonts['heading']}
-  body:     {fonts['body']}
+  display/headings: {fonts['heading']} (Newsreader)
+  body:             {fonts['body']} (Public Sans)
+  mono/numerics:    {fonts.get('mono', 'IBM Plex Mono')}
 
 DOCUMENT LABELS
   report type: {labels.get('report_type', 'Report')}
@@ -393,11 +394,12 @@ def build_stylesheet(config: dict) -> str:
     fonts = config["fonts"]
     replacements = {
         "{{PRIMARY}}": colors["primary"],
-        "{{SECONDARY}}": colors["secondary"],
+        "{{SECONDARY}}": colors.get("secondary", colors["primary"]),
         "{{ACCENT}}": colors["accent"],
-        "{{CRITICAL}}": colors.get("critical", "#c53030"),
-        "{{HIGH}}": colors.get("high", "#dd6b20"),
-        "{{MEDIUM}}": colors.get("medium", "#d69e2e"),
+        "{{CRITICAL}}": colors.get("critical", "#8F2018"),
+        "{{HIGH}}": colors.get("high", "#A23A2C"),
+        "{{MEDIUM}}": colors.get("medium", "#C79A3E"),
+        "{{POSITIVE}}": colors.get("positive", "#3C7350"),
         "{{TEXT}}": colors["text"],
         "{{TEXT_LIGHT}}": colors["text_light"],
         "{{BACKGROUND}}": colors["background"],
@@ -405,8 +407,10 @@ def build_stylesheet(config: dict) -> str:
         "{{BORDER}}": colors["border"],
         "{{HEADING_FONT}}": fonts["heading"],
         "{{BODY_FONT}}": fonts["body"],
+        "{{MONO_FONT}}": fonts.get("mono", "IBM Plex Mono"),
         "{{HEADING_FONT_URL}}": fonts.get("heading_url", ""),
         "{{BODY_FONT_URL}}": fonts.get("body_url", ""),
+        "{{MONO_FONT_URL}}": fonts.get("mono_url", ""),
     }
     for token, value in replacements.items():
         css = css.replace(token, value)
@@ -437,6 +441,6 @@ def brand_summary(config: dict) -> str:
     fonts = config["fonts"]
     return (
         f"Brand loaded: {c['name']} | "
-        f"primary {colors['primary']} | "
-        f"fonts {fonts['heading']} / {fonts['body']}"
+        f"teal {colors['primary']} | "
+        f"fonts {fonts['heading']} / {fonts['body']} / {fonts.get('mono', 'IBM Plex Mono')}"
     )

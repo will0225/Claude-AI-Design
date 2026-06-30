@@ -1,31 +1,22 @@
 # =============================================================================
-# PERMANENT DESIGN PAGE — replaces Claude.ai Design settings
+# HVAC ASSET MANAGEMENT — Official Report Style Guide (v1)
 # =============================================================================
-# Claude's Design page saves colors/fonts/format in the UI but cannot reference
-# them reliably across chats. THIS FILE is the single design source the scripts
-# inject into every API call automatically.
-#
-# Setup once:
-#   cp brand.config.example.yaml brand.config.yaml
-#   Copy your Design page values (hex colors, font names) into sections below.
-#
-# Verify:
-#   cd python && python design.py show
-#   cd python && python design.py preview
+# Colors/fonts from HAM_Report_Style_Guide.pdf
+# Verify: python design.py preview
 # =============================================================================
 
-design_id: "hvac-standard-review-v1"
+design_id: "ham-report-system-v1"
 
-# Claude Design project — source of truth for colors, fonts, layout
 claude_design:
   project_id: "575aeb46-b224-4fc6-9f4d-29bacdbcf962"
   project_url: "https://claude.ai/design/p/575aeb46-b224-4fc6-9f4d-29bacdbcf962"
   reference_file: "Standard Review - 4600 Northgate.dc.html"
   local_path: "brand/design/Standard Review - 4600 Northgate.dc.html"
+  style_guide: "brand/HAM_Report_Style_Guide.pdf"
 
 company:
   name: "HVAC Asset Management"
-  tagline: "Forensic Asset & Spend Review"
+  tagline: "Independent Mechanical Fiduciary"
   website: ""
   contact_email: "Audit@hvacasset.com"
   contact_phone: "(877) 239-7716"
@@ -37,76 +28,101 @@ document_labels:
   footer_disclaimer: >-
     Prepared by HVAC Asset Management as an independent forensic baseline.
     Figures reconcile to the client general ledger; recommendations do not
-    constitute engineering certification.
+    constitute engineering certification. Severity colors are reserved for
+    findings and ratings — never decorative.
 
+# Official palette — HAM Report Style Guide v1
 colors:
-  primary: "#0f2744"
-  secondary: "#1a4480"
-  accent: "#c05621"
-  critical: "#c53030"
-  high: "#dd6b20"
-  medium: "#d69e2e"
-  text: "#1a202c"
-  text_light: "#4a5568"
-  background: "#ffffff"
-  surface: "#f7fafc"
-  border: "#e2e8f0"
+  teal: "#184C4C"
+  bronze: "#9C7B4D"
+  ink: "#1A2731"
+  muted: "#54514A"
+  cream: "#F6F1E8"
+  paper: "#FBF9F5"
+  critical: "#8F2018"
+  high: "#A23A2C"
+  medium: "#C79A3E"
+  positive: "#3C7350"
+  # Template aliases (used by CSS generator)
+  primary: "#184C4C"
+  secondary: "#184C4C"
+  accent: "#9C7B4D"
+  text: "#1A2731"
+  text_light: "#54514A"
+  background: "#FBF9F5"
+  surface: "#F6F1E8"
+  border: "#DDD5C8"
 
 fonts:
-  heading: "Libre Franklin"
-  body: "Source Sans 3"
-  heading_url: "https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@600;700&display=swap"
-  body_url: "https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&display=swap"
+  heading: "Newsreader"
+  body: "Public Sans"
+  mono: "IBM Plex Mono"
+  heading_url: "https://fonts.googleapis.com/css2?family=Newsreader:wght@500;600&display=swap"
+  body_url: "https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap"
+  mono_url: "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+
+typography:
+  h1: "42-58pt Newsreader"
+  h2: "27pt Newsreader with 1.5px hairline above"
+  h3: "12pt Public Sans small caps bronze"
+  body: "14pt Public Sans line-height 1.62"
+  eyebrow: "10-12pt Public Sans small caps letter-spaced bronze"
+  disclaimer: "11.5pt muted"
+
+layout:
+  page: "US Letter"
+  text_inset: "0.85in"
+  h2_top_spacing: "44px"
+  full_bleed_bands: true
 
 writing_style:
-  tone: "forensic, precise, authoritative — suitable for property owners and asset managers"
+  tone: "forensic, precise, authoritative — independent mechanical fiduciary"
   voice: "Third person for findings; direct ACTION lines for recommendations"
   avoid:
     - "marketing language"
     - "exclamation marks"
-    - "unsupported speculation"
+    - "decorative use of severity colors"
   paragraph_style: "2–4 sentences; lead with the finding or number"
   audience: "property owners, asset managers, and portfolio controllers"
 
-# Forensic spend review — fixed section order (matches Standard Review format)
 report:
   sections:
     - number: "00"
       name: "Executive Summary"
-      description: "Opening narrative plus KPI stat grid (operating spend, capital, rebate, reactive:preventive ratio, comfort complaints, finding counts)"
+      description: "Opening narrative plus stat tiles (operating spend, capital, rebate, reactive:preventive ratio, comfort complaints, finding counts)"
     - number: "01"
       name: "Financial & Contractual Baseline"
-      description: "GL cost-category table, R&M detail table, active service agreement summary"
+      description: "GL cost-category table (teal header, zebra rows, mono numerics), R&M detail, service agreement callout"
     - number: "02"
       name: "Vendor Performance & Standard-of-Care Audit"
-      description: "Vendor engagement table, quarterly PM execution vs contracted scope with documentation gaps"
+      description: "Vendor table, quarterly PM execution vs scope with severity flags"
     - number: "03"
       name: "Asset & Equipment Risk + Capital Plan"
-      description: "Capital replacements placed in service, pending replacements, end-of-life fleet notes"
+      description: "Capital replacements table, pending units, end-of-life notes"
     - number: "04"
       name: "Comfort & Reliability — Hot / Cold Calls"
-      description: "Per-suite complaint timeline — CHRONIC vs RESOLVED, visit dates, spend, warranty notes"
+      description: "CHRONIC vs RESOLVED timelines with visit dates and spend"
     - number: "05"
       name: "Findings, Exposure & Recommendations"
-      description: "Findings F-01+ by severity (CRITICAL/HIGH/MEDIUM) with ACTION lines, prioritized recommendations table, data gaps list"
+      description: "Finding cards F-01+ with severity badges, recommendation boxes, data gaps caveat box"
 
 proposal:
   sections:
     - number: "00"
       name: "Executive Summary"
-      description: "Scope, property, review period, and deliverables overview"
+      description: "Scope, property, review period, deliverables"
     - number: "01"
       name: "Scope of Services"
-      description: "Forensic review activities — GL reconciliation, vendor audit, asset risk, comfort log"
+      description: "Forensic review activities"
     - number: "02"
       name: "Deliverables & Timeline"
-      description: "Report format, issuance date, data required from client"
+      description: "Report format and data requirements"
     - number: "03"
       name: "Investment"
-      description: "Fee structure and payment terms"
+      description: "Fee structure"
     - number: "04"
       name: "Next Steps"
-      description: "Engagement acceptance and data-request checklist"
+      description: "Engagement acceptance checklist"
 
 behavior:
   never_ask_about:
@@ -119,11 +135,16 @@ behavior:
   if_detail_missing: 'Use <span class="fill-in">[FILL IN: brief description]</span> — do not ask the user'
 
 report_html_patterns: |
-  Use these CSS classes in section HTML fragments:
-  - .kpi-grid > .kpi-card with .kpi-value and .kpi-label for Executive Summary stats
-  - table.data-table for all financial/vendor tables (thead + tbody)
-  - .finding.finding-critical, .finding-high, .finding-medium for findings blocks
-  - .finding-id (e.g. F-01), .finding-title, .finding-action for finding structure
-  - .flag-critical, .flag-high for inline PM/audit flags
-  - .timeline for comfort-call date sequences
-  - .data-gaps for bulleted missing-data list at end of section 05
+  HAM Report Style Guide v1 — use these CSS classes:
+  - .eyebrow for small caps bronze labels (Public Sans)
+  - .stat-tile grid for Executive Summary KPIs (large Newsreader numerals, mono for dollars)
+  - table.data-table: teal thead, zebra tbody (white/cream), td.num mono right-aligned
+  - .finding-card.finding-critical|.finding-high|.finding-medium with .severity-badge
+  - .finding-index (bronze serif number), .finding-title (Public Sans bold), .finding-action
+  - .recommendation-box: teal bg, gold left border, white text
+  - .key-finding-callout: cream bg, gold left border
+  - .caveat-box: cream bg, gray border, "GOVERNING CAVEAT" eyebrow
+  - .flag-critical, .flag-high for inline PM audit flags
+  - .timeline with .visit-date in mono
+  - .data-gaps in caveat-box at end of section 05
+  - Severity colors ONLY on findings/ratings — never decorative
