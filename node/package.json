@@ -1,0 +1,14 @@
+{
+  "name": "claude-demo-node",
+  "version": "1.0.0",
+  "description": "Minimal Claude API demo (Node.js)",
+  "type": "module",
+  "scripts": {
+    "demo": "node claude_demo.js",
+    "demo:all": "node claude_demo.js --all"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.52.0",
+    "dotenv": "^16.4.0"
+  }
+}
