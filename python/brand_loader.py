@@ -5,6 +5,8 @@ and document rules automatically — so Claude never asks again.
 
 from __future__ import annotations
 
+import json
+import re
 import sys
 from datetime import date
 from pathlib import Path
@@ -16,7 +18,12 @@ CONFIG_PATH = BRAND_DIR / "brand.config.yaml"
 EXAMPLE_PATH = BRAND_DIR / "brand.config.example.yaml"
 STYLES_PATH = BRAND_DIR / "styles" / "document.css"
 HTML_TEMPLATE_PATH = BRAND_DIR / "templates" / "document.html"
+FIXED_TEMPLATE_PATH = BRAND_DIR / "templates" / "fixed_document.html"
 OUTPUT_DIR = BRAND_DIR / "output"
+INBOX_DIR = BRAND_DIR / "inbox"
+INBOX_DONE_DIR = INBOX_DIR / "done"
+
+READABLE_EXTENSIONS = {".txt", ".md", ".csv", ".json", ".log", ".rtf"}
 
 
 def load_brand_config() -> dict:
@@ -46,12 +53,144 @@ def validate_brand_config(config: dict) -> list[str]:
     return warnings
 
 
+def section_slug(name: str) -> str:
+    slug = name.lower()
+    slug = re.sub(r"[^a-z0-9]+", "_", slug)
+    return slug.strip("_")
+
+
+def section_specs(doc_type: str, config: dict) -> list[dict]:
+    return [
+        {"name": s["name"], "slug": section_slug(s["name"]), "description": s["description"]}
+        for s in config.get(doc_type, {}).get("sections", [])
+    ]
+
+
 def _section_list(doc_key: str, config: dict) -> str:
     sections = config.get(doc_key, {}).get("sections", [])
     lines = []
     for i, sec in enumerate(sections, 1):
         lines.append(f"  {i}. {sec['name']} — {sec['description']}")
     return "\n".join(lines)
+
+
+def build_json_system_prompt(config: dict, doc_type: str) -> str:
+    """System prompt that returns structured JSON — rendered into a fixed template."""
+    c = config["company"]
+    style = config["writing_style"]
+    behavior = config.get("behavior", {})
+    avoid = ", ".join(style.get("avoid", []))
+    never_ask = ", ".join(behavior.get("never_ask_about", []))
+    missing_rule = behavior.get(
+        "if_detail_missing",
+        'Use HTML: <span class="fill-in">[FILL IN: brief description]</span>',
+    )
+
+    doc_label = "Proposal" if doc_type == "proposal" else "Report"
+    specs = section_specs(doc_type, config)
+
+    section_lines = []
+    json_keys = []
+    for i, spec in enumerate(specs, 1):
+        section_lines.append(f"  {i}. {spec['name']} (key: `{spec['slug']}`) — {spec['description']}")
+        json_keys.append(f'    "{spec["slug"]}": "HTML fragment (<p>, <ul>, <table> only — no h1/h2)"')
+
+    sections_block = "\n".join(section_lines)
+    json_schema = "{\n  \"document_title\": \"Short title for this specific document\",\n  \"sections\": {\n"
+    json_schema += ",\n".join(json_keys)
+    json_schema += "\n  }\n}"
+
+    return f"""You are a document writer for {c['name']}. Populate a fixed {doc_label.lower()} template from source material.
+
+CRITICAL RULES:
+- NEVER ask the user about: {never_ask}.
+- If project-specific detail is missing, {missing_rule} — do not ask questions.
+- Writing tone: {style['tone']}. Voice: {style['voice']}. Avoid: {avoid}.
+- Paragraphs: {style.get('paragraph_style', '2–4 sentences')}.
+
+SECTIONS (fill every key — same keys every time, in this order):
+{sections_block}
+
+OUTPUT: Return ONLY valid JSON matching this exact schema (no markdown fences, no extra text):
+{json_schema}
+
+Each section value is an HTML fragment (paragraphs, lists, tables). Do NOT include section headings — those are in the template."""
+
+
+def parse_json_response(text: str) -> dict:
+    text = text.strip()
+    match = re.search(r"```(?:json)?\s*(.*?)```", text, re.DOTALL | re.IGNORECASE)
+    if match:
+        text = match.group(1).strip()
+    return json.loads(text)
+
+
+def render_fixed_document(config: dict, doc_type: str, payload: dict) -> str:
+    """Render JSON content into the fixed HTML template — identical layout every time."""
+    c = config["company"]
+    specs = section_specs(doc_type, config)
+    sections_data = payload.get("sections", {})
+    doc_title = payload.get("document_title", doc_type.title())
+
+    parts = []
+    for spec in specs:
+        content = sections_data.get(spec["slug"], '<p class="fill-in">[FILL IN]</p>')
+        parts.append(
+            f'    <section class="doc-section" id="{spec["slug"]}">\n'
+            f'      <h2>{spec["name"]}</h2>\n'
+            f'      <div class="section-body">{content}</div>\n'
+            f"    </section>"
+        )
+    sections_html = "\n".join(parts)
+
+    template = FIXED_TEMPLATE_PATH.read_text(encoding="utf-8")
+    styles = build_stylesheet(config)
+    doc_label = "Proposal" if doc_type == "proposal" else "Report"
+
+    replacements = {
+        "{{TITLE}}": f"{c['name']} — {doc_title}",
+        "{{STYLES}}": styles,
+        "{{DOC_TYPE}}": doc_label.upper(),
+        "{{COMPANY_NAME}}": c["name"],
+        "{{TAGLINE}}": c.get("tagline", ""),
+        "{{DOCUMENT_TITLE}}": doc_title,
+        "{{DATE}}": date.today().strftime("%B %d, %Y"),
+        "{{SECTIONS}}": sections_html,
+        "{{CONTACT_EMAIL}}": c.get("contact_email", ""),
+        "{{WEBSITE}}": c.get("website", ""),
+    }
+    html = template
+    for token, value in replacements.items():
+        html = html.replace(token, value)
+    return html
+
+
+def latest_inbox_file() -> Path | None:
+    """Newest readable file in brand/inbox/ (ignores README and done/)."""
+    if not INBOX_DIR.exists():
+        return None
+    candidates = [
+        p
+        for p in INBOX_DIR.iterdir()
+        if p.is_file()
+        and p.suffix.lower() in READABLE_EXTENSIONS
+        and p.name != "README.txt"
+    ]
+    if not candidates:
+        return None
+    return max(candidates, key=lambda p: p.stat().st_mtime)
+
+
+def read_source_file(path: Path) -> str:
+    return path.read_text(encoding="utf-8", errors="replace").strip()
+
+
+def archive_inbox_file(path: Path) -> None:
+    INBOX_DONE_DIR.mkdir(parents=True, exist_ok=True)
+    dest = INBOX_DONE_DIR / path.name
+    if dest.exists():
+        dest = INBOX_DONE_DIR / f"{path.stem}-{date.today().isoformat()}{path.suffix}"
+    path.rename(dest)
 
 
 def build_brand_system_prompt(config: dict, doc_type: str) -> str:

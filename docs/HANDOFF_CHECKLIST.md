@@ -2,7 +2,7 @@
 
 Use this checklist during your screen-share to confirm everything works on the client's machine. Target time: 30–40 minutes.
 
-**Client priority:** Branded proposals and reports without repeating fonts, colors, or format every time.
+**Client priority:** Downloaded info → same proposal or report template every time. No repeated brand questions.
 
 ---
 
@@ -10,12 +10,11 @@ Use this checklist during your screen-share to confirm everything works on the c
 
 Send the client this list 24 hours ahead:
 
-- [ ] Anthropic account created at [console.anthropic.com](https://console.anthropic.com)
-- [ ] API key created and saved in a password manager
-- [ ] Python 3.9+ **or** Node 18+ installed
-- [ ] Repo cloned or zip downloaded
-- [ ] **Brand info ready:** hex color codes, font names, company contact details (from brand guide or existing proposal PDF)
-- [ ] One sample set of raw notes they would normally turn into a proposal or report
+- [ ] Anthropic account + API key ready
+- [ ] Python 3.9+ installed
+- [ ] Repo cloned
+- [ ] **Brand info ready:** hex colors, font names, company contact details
+- [ ] **One downloaded file** they would normally turn into a proposal or report (saved as .txt or .csv)
 
 ---
 
@@ -43,31 +42,37 @@ cp brand/brand.config.example.yaml brand/brand.config.yaml
 - [ ] Paste API key (mask on screen)
 - [ ] `pip install -r requirements.txt`
 
-### 4. Generate branded proposal (7 min)
+### 4. Download → proposal (7 min)
 
 ```bash
-python generate_document.py proposal --input ../brand/samples/proposal-notes.txt
+# Client drops their downloaded file into brand/inbox/
+cp ~/Downloads/their-notes.txt ../brand/inbox/
+
+python make.py proposal
 ```
 
-- [ ] Script runs without asking about fonts or colors
+- [ ] Script picks up newest inbox file automatically
+- [ ] No questions about fonts, colors, or format
 - [ ] HTML saved to `brand/output/`
-- [ ] Open in browser — client's colors and fonts visible in header/sections
-- [ ] Print preview → PDF looks on-brand
+- [ ] Section order matches their proposal template exactly
+- [ ] Open in browser → Print preview → PDF
 
-### 5. Generate branded report (5 min)
+### 5. Download → report (5 min)
 
 ```bash
-python generate_document.py report --input ../brand/samples/report-notes.txt
+cp ../brand/samples/report-notes.txt ../brand/inbox/
+python make.py report
 ```
 
-- [ ] Report uses same brand automatically (no re-entry)
-- [ ] Section order matches `report.sections` in config
+- [ ] Report uses **same brand**, different fixed section order
+- [ ] Layout identical to every future report — only content changes
+- [ ] Inbox file moved to `brand/inbox/done/`
 
-### 6. Client's own content (5 min)
+### 6. Client's own download (5 min)
 
-- [ ] Client pastes their real notes into a text file
-- [ ] Run: `python generate_document.py proposal --input their-notes.txt`
-- [ ] Output is usable with minimal edits; `[FILL IN]` only where their notes were thin
+- [ ] Client drops their real file in `brand/inbox/`
+- [ ] Run `python make.py proposal` or `python make.py report`
+- [ ] Output is usable with minimal edits; `[FILL IN]` only where source data was thin
 
 ### 7. "Can you rebuild without me?" test (5 min)
 

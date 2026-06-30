@@ -7,6 +7,14 @@ brand/brand.config.yaml
 # Generated documents
 brand/output/*.html
 
+# Client inbox downloads (keep folder structure)
+brand/inbox/*
+!brand/inbox/README.txt
+!brand/inbox/.gitkeep
+!brand/inbox/done/
+brand/inbox/done/*
+!brand/inbox/done/.gitkeep
+
 # Python
 __pycache__/
 *.py[cod]

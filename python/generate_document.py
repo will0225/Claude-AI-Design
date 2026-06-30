@@ -32,10 +32,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from brand_loader import (  # noqa: E402
     OUTPUT_DIR,
     brand_summary,
-    build_brand_system_prompt,
+    build_json_system_prompt,
     load_brand_config,
+    parse_json_response,
+    render_fixed_document,
     validate_brand_config,
-    wrap_html,
 )
 
 DEFAULT_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
@@ -62,7 +63,7 @@ def read_input(path: str | None) -> str:
 
 
 def extract_html(text: str) -> str:
-    """Strip markdown fences if Claude wraps HTML anyway."""
+    """Legacy helper — prefer fixed JSON pipeline in make.py."""
     text = text.strip()
     match = re.search(r"```(?:html)?\s*(.*?)```", text, re.DOTALL | re.IGNORECASE)
     if match:
@@ -71,8 +72,8 @@ def extract_html(text: str) -> str:
 
 
 def generate(client, config: dict, doc_type: str, user_content: str) -> str:
-    system = build_brand_system_prompt(config, doc_type)
-    doc_label = "proposal" if doc_type == "proposal" else "report"
+    system = build_json_system_prompt(config, doc_type)
+    doc_label = doc_type
 
     response = client.messages.create(
         model=DEFAULT_MODEL,
@@ -82,14 +83,15 @@ def generate(client, config: dict, doc_type: str, user_content: str) -> str:
             {
                 "role": "user",
                 "content": (
-                    f"Create a {doc_label} from the following source material. "
-                    f"Apply our brand automatically. Do not ask any questions.\n\n"
+                    f"Fill the {doc_label} template from the following source material. "
+                    f"Use the fixed section keys. Do not ask any questions.\n\n"
                     f"--- SOURCE MATERIAL ---\n{user_content}"
                 ),
             }
         ],
     )
-    return extract_html(response.content[0].text)
+    payload = parse_json_response(response.content[0].text)
+    return render_fixed_document(config, doc_type, payload)
 
 
 def save_output(html: str, doc_type: str, config: dict) -> Path:
@@ -98,8 +100,7 @@ def save_output(html: str, doc_type: str, config: dict) -> Path:
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     filename = f"{company_slug}-{doc_type}-{timestamp}.html"
     out_path = OUTPUT_DIR / filename
-    title = f"{config['company']['name']} — {doc_type.title()}"
-    out_path.write_text(wrap_html(html, title, config), encoding="utf-8")
+    out_path.write_text(html, encoding="utf-8")
     return out_path
 
 

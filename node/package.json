@@ -6,6 +6,8 @@
   "scripts": {
     "demo": "node claude_demo.js",
     "demo:all": "node claude_demo.js --all",
+    "make:proposal": "node make.js proposal",
+    "make:report": "node make.js report",
     "generate:proposal": "node generate_document.js proposal --input ../brand/samples/proposal-notes.txt",
     "generate:report": "node generate_document.js report --input ../brand/samples/report-notes.txt",
     "brand": "node generate_document.js --show-brand"

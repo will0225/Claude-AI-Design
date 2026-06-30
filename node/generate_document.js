@@ -19,10 +19,11 @@ import { fileURLToPath } from "url";
 import {
   OUTPUT_DIR,
   brandSummary,
-  buildBrandSystemPrompt,
+  buildJsonSystemPrompt,
   loadBrandConfig,
+  parseJsonResponse,
+  renderFixedDocument,
   validateBrandConfig,
-  wrapHtml,
 } from "./brand_loader.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -45,8 +46,7 @@ function extractHtml(text) {
 }
 
 async function generate(client, config, docType, userContent) {
-  const system = buildBrandSystemPrompt(config, docType);
-  const docLabel = docType === "proposal" ? "proposal" : "report";
+  const system = buildJsonSystemPrompt(config, docType);
   const response = await client.messages.create({
     model: DEFAULT_MODEL,
     max_tokens: 8192,
@@ -55,13 +55,14 @@ async function generate(client, config, docType, userContent) {
       {
         role: "user",
         content:
-          `Create a ${docLabel} from the following source material. ` +
-          `Apply our brand automatically. Do not ask any questions.\n\n` +
+          `Fill the ${docType} template from the following source material. ` +
+          `Use the fixed section keys. Do not ask any questions.\n\n` +
           `--- SOURCE MATERIAL ---\n${userContent}`,
       },
     ],
   });
-  return extractHtml(response.content[0].text);
+  const payload = parseJsonResponse(response.content[0].text);
+  return renderFixedDocument(config, docType, payload);
 }
 
 function saveOutput(html, docType, config) {
@@ -71,7 +72,7 @@ function saveOutput(html, docType, config) {
   const filename = `${slug}-${docType}-${timestamp}.html`;
   const outPath = path.join(OUTPUT_DIR, filename);
   const title = `${config.company.name} — ${docType[0].toUpperCase()}${docType.slice(1)}`;
-  fs.writeFileSync(outPath, wrapHtml(html, title, config), "utf8");
+  fs.writeFileSync(outPath, html, "utf8");
   return outPath;
 }
 

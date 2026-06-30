@@ -1,88 +1,82 @@
 # Claude Brand Document Kit
 
-Generate **branded proposals and reports** with Claude — your company fonts, colors, and writing style applied automatically. Set up once in `brand/brand.config.yaml`; never tell Claude your brand again.
+**Download information → drop in inbox → get the same proposal or report every time.**
 
-## The problem this solves
+Your fonts, colors, and section layout are set once. After that, you only provide the raw content.
 
-> "I've told Claude my fonts and colors 22 times and it still asks me."
+## Daily workflow (3 steps)
 
-Chat memory doesn't persist brand rules. This kit stores them in a **config file** and injects them into every API call automatically — zero repeated questions.
+```
+1. Save/download info  →  brand/inbox/
+2. Run one command     →  python make.py proposal   OR   python make.py report
+3. Open output         →  brand/output/*.html  →  Print → PDF
+```
 
-## Quick start
+Full guide → [docs/WORKFLOW.md](./docs/WORKFLOW.md)
 
-### 1. One-time brand setup
+## One-time setup
 
 ```bash
 cp brand/brand.config.example.yaml brand/brand.config.yaml
-# Edit brand.config.yaml — your company name, hex colors, fonts, writing style
-```
+# Edit: company name, hex colors, fonts, section names
 
-Full walkthrough → [docs/BRAND_SETUP.md](./docs/BRAND_SETUP.md)
-
-### 2. API key
-
-```bash
 cd python && cp .env.example .env   # add ANTHROPIC_API_KEY
 pip install -r requirements.txt
 ```
 
-### 3. Generate a branded document
+## Commands
 
 ```bash
-# Proposal from sample notes
-python generate_document.py proposal --input ../brand/samples/proposal-notes.txt
+cd python
 
-# Report from sample data
-python generate_document.py report --input ../brand/samples/report-notes.txt
+python make.py proposal              # inbox → fixed proposal template
+python make.py report                # inbox → fixed report template
+python make.py proposal --file notes.txt
 
-# Verify brand loaded
-python generate_document.py --show-brand
+python generate_document.py --show-brand   # verify brand config
 ```
 
-Output saves to `brand/output/*.html` → open in browser → Print → Save as PDF.
+From repo root:
+
+```bash
+chmod +x make-proposal.sh make-report.sh
+./make-proposal.sh
+./make-report.sh
+```
+
+## Two fixed templates
+
+| Template | Sections (always same order) |
+|----------|------------------------------|
+| **Proposal** | Executive Summary → Understanding Your Needs → Proposed Approach → Timeline & Investment → Why Work With Us → Next Steps |
+| **Report** | Executive Summary → Scope & Methodology → Key Findings → Analysis → Recommendations → Appendix |
+
+Customize sections in `brand/brand.config.yaml`.
 
 ## What's included
 
 | Deliverable | Location |
 |-------------|----------|
-| **Brand config (edit once)** | `brand/brand.config.example.yaml` → `brand.config.yaml` |
-| **Proposal/report generator (Python)** | `python/generate_document.py` |
-| **Proposal/report generator (Node.js)** | `node/generate_document.js` |
+| **Drop folder for downloads** | `brand/inbox/` |
+| **One-command generator** | `python/make.py`, `node/make.js` |
+| **Brand config (edit once)** | `brand/brand.config.yaml` |
+| **Daily workflow guide** | [docs/WORKFLOW.md](./docs/WORKFLOW.md) |
 | **Brand setup guide** | [docs/BRAND_SETUP.md](./docs/BRAND_SETUP.md) |
-| **API & account setup** | [docs/SETUP_GUIDE.md](./docs/SETUP_GUIDE.md) |
-| **How to extend** | [docs/EXTENSION_GUIDE.md](./docs/EXTENSION_GUIDE.md) |
-| **Example prompts + rationale** | [docs/EXAMPLE_PROMPTS.md](./docs/EXAMPLE_PROMPTS.md) |
 | **Handoff checklist** | [docs/HANDOFF_CHECKLIST.md](./docs/HANDOFF_CHECKLIST.md) |
-| **Sample input notes** | `brand/samples/proposal-notes.txt`, `report-notes.txt` |
 
-## Commands
+## The problem this solves
 
-```bash
-# Branded documents (primary workflow)
-python generate_document.py proposal --input my-notes.txt
-python generate_document.py report --input my-data.txt
-python generate_document.py --show-brand
+> "I've told Claude my fonts and colors 22 times and it still asks."
 
-# API smoke test
-python claude_demo.py
+> "When I download information I need it in a report or proposal that are always the same."
 
-# Node.js equivalents
-npm run brand
-npm run generate:proposal
-npm run generate:report
-```
+Brand rules and document structure live in a **config file + fixed HTML template** — injected automatically. Claude only fills in the content for each section.
 
 ## Requirements
 
 - Anthropic API key ([get one here](https://console.anthropic.com/settings/keys))
-- Python 3.9+ **or** Node.js 18+
-- Your brand hex colors and font names (from brand guide, Canva, or website)
-
-## Security
-
-- Never commit `brand/brand.config.yaml` (client-specific) or `.env` (API keys)
-- Both are in `.gitignore`
+- Python 3.9+ or Node.js 18+
 
 ## License
 
-MIT — use and adapt freely for your projects.
+MIT

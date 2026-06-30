@@ -1,5 +1,5 @@
 /**
- * Load brand.config.yaml and build system prompts with fonts, colors, and rules baked in.
+ * Load brand.config.yaml, build prompts, render fixed templates.
  */
 
 import fs from "fs";
@@ -12,8 +12,12 @@ export const BRAND_DIR = path.resolve(__dirname, "../brand");
 export const CONFIG_PATH = path.join(BRAND_DIR, "brand.config.yaml");
 export const EXAMPLE_PATH = path.join(BRAND_DIR, "brand.config.example.yaml");
 export const STYLES_PATH = path.join(BRAND_DIR, "styles", "document.css");
-export const HTML_TEMPLATE_PATH = path.join(BRAND_DIR, "templates", "document.html");
+export const FIXED_TEMPLATE_PATH = path.join(BRAND_DIR, "templates", "fixed_document.html");
 export const OUTPUT_DIR = path.join(BRAND_DIR, "output");
+export const INBOX_DIR = path.join(BRAND_DIR, "inbox");
+export const INBOX_DONE_DIR = path.join(INBOX_DIR, "done");
+
+const READABLE_EXTENSIONS = new Set([".txt", ".md", ".csv", ".json", ".log", ".rtf"]);
 
 export function loadBrandConfig() {
   if (!fs.existsSync(CONFIG_PATH)) {
@@ -42,76 +46,68 @@ export function validateBrandConfig(config) {
   return warnings;
 }
 
-function sectionList(docKey, config) {
-  return (config[docKey]?.sections ?? [])
-    .map((sec, i) => `  ${i + 1}. ${sec.name} — ${sec.description}`)
-    .join("\n");
+export function sectionSlug(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 }
 
-export function buildBrandSystemPrompt(config, docType) {
+export function sectionSpecs(docType, config) {
+  return (config[docType]?.sections ?? []).map((s) => ({
+    name: s.name,
+    slug: sectionSlug(s.name),
+    description: s.description,
+  }));
+}
+
+export function buildJsonSystemPrompt(config, docType) {
   const c = config.company;
-  const colors = config.colors;
-  const fonts = config.fonts;
   const style = config.writing_style;
   const behavior = config.behavior ?? {};
   const avoid = (style.avoid ?? []).join(", ");
   const neverAsk = (behavior.never_ask_about ?? []).join(", ");
   const missingRule =
     behavior.if_detail_missing ??
-    "Use [FILL IN: description] — do not ask the user";
+    'Use HTML: <span class="fill-in">[FILL IN: brief description]</span>';
 
   const docLabel = docType === "proposal" ? "Proposal" : "Report";
-  const sections = sectionList(docType, config);
-  const today = new Date().toISOString().slice(0, 10);
+  const specs = sectionSpecs(docType, config);
 
-  return `You are a document writer for ${c.name}. Your job is to produce a polished ${docLabel.toLowerCase()} using ONLY the brand and structure defined below.
+  const sectionLines = specs
+    .map((s, i) => `  ${i + 1}. ${s.name} (key: \`${s.slug}\`) — ${s.description}`)
+    .join("\n");
 
-CRITICAL RULES — follow every time:
+  const jsonKeys = specs
+    .map((s) => `    "${s.slug}": "HTML fragment (<p>, <ul>, <table> only — no h1/h2)"`)
+    .join(",\n");
+
+  const jsonSchema = `{
+  "document_title": "Short title for this specific document",
+  "sections": {
+${jsonKeys}
+  }
+}`;
+
+  return `You are a document writer for ${c.name}. Populate a fixed ${docLabel.toLowerCase()} template from source material.
+
+CRITICAL RULES:
 - NEVER ask the user about: ${neverAsk}.
-- All brand details are provided below. Do NOT request colors, fonts, logos, tone, or section structure.
-- If project-specific detail is missing, ${missingRule}
-- Apply the writing style on every sentence without exception.
+- If project-specific detail is missing, ${missingRule} — do not ask questions.
+- Writing tone: ${style.tone}. Voice: ${style.voice}. Avoid: ${avoid}.
+- Paragraphs: ${style.paragraph_style ?? "2–4 sentences"}.
 
-=== COMPANY (use in header and footer) ===
-Name: ${c.name}
-Tagline: ${c.tagline ?? ""}
-Website: ${c.website ?? ""}
-Email: ${c.contact_email ?? ""}
-Phone: ${c.contact_phone || "N/A"}
+SECTIONS (fill every key — same keys every time, in this order):
+${sectionLines}
 
-=== BRAND COLORS (use these exact hex values in all styling) ===
-Primary:   ${colors.primary}
-Secondary: ${colors.secondary}
-Accent:    ${colors.accent}
-Text:      ${colors.text}
-Text Light:${colors.text_light}
-Background:${colors.background}
-Surface:   ${colors.surface}
-Border:    ${colors.border}
+OUTPUT: Return ONLY valid JSON matching this exact schema (no markdown fences, no extra text):
+${jsonSchema}
 
-=== BRAND FONTS (use these exact font-family names) ===
-Headings: ${fonts.heading} (bold, 600–700 weight)
-Body:     ${fonts.body} (regular, 400–600 weight)
+Each section value is an HTML fragment (paragraphs, lists, tables). Do NOT include section headings — those are in the template.`;
+}
 
-=== WRITING STYLE ===
-Tone:       ${style.tone}
-Voice:      ${style.voice}
-Audience:   ${style.audience ?? "business readers"}
-Paragraphs: ${style.paragraph_style ?? "2–4 sentences"}
-Avoid:      ${avoid}
-
-=== ${docLabel.toUpperCase()} SECTIONS (include in this exact order) ===
-${sections}
-
-=== OUTPUT FORMAT ===
-Return a complete HTML document (including <!DOCTYPE html>, <html>, <head>, <body>).
-- Embed all CSS in a <style> block in <head>.
-- Use the exact hex colors and font-family names listed above.
-- Include a styled <header> with company name, tagline, document title, and today's date (${today}).
-- Include a <footer> with company contact info.
-- Use semantic HTML: h1/h2/h3, tables where appropriate, .callout for key points.
-- Mark unknown project details with <span class="fill-in">[FILL IN: …]</span> — never ask the user in chat.
-- Output ONLY the HTML document. No preamble, no markdown fences, no questions.`;
+export function parseJsonResponse(text) {
+  let cleaned = text.trim();
+  const match = cleaned.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (match) cleaned = match[1].trim();
+  return JSON.parse(cleaned);
 }
 
 export function buildStylesheet(config) {
@@ -137,20 +133,78 @@ export function buildStylesheet(config) {
   return css.split("\n").filter((ln) => !ln.includes('@import url("");')).join("\n");
 }
 
-export function wrapHtml(content, title, config) {
-  const stripped = content.trim();
-  if (stripped.toLowerCase().startsWith("<!doctype") || stripped.toLowerCase().startsWith("<html")) {
-    return stripped;
-  }
-  const template = fs.readFileSync(HTML_TEMPLATE_PATH, "utf8");
+export function renderFixedDocument(config, docType, payload) {
+  const c = config.company;
+  const specs = sectionSpecs(docType, config);
+  const sectionsData = payload.sections ?? {};
+  const docTitle = payload.document_title ?? docType[0].toUpperCase() + docType.slice(1);
+
+  const sectionsHtml = specs
+    .map((spec) => {
+      const content = sectionsData[spec.slug] ?? '<p class="fill-in">[FILL IN]</p>';
+      return `    <section class="doc-section" id="${spec.slug}">\n      <h2>${spec.name}</h2>\n      <div class="section-body">${content}</div>\n    </section>`;
+    })
+    .join("\n");
+
+  const today = new Date().toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  let html = fs.readFileSync(FIXED_TEMPLATE_PATH, "utf8");
+  const docLabel = docType === "proposal" ? "PROPOSAL" : "REPORT";
   const styles = buildStylesheet(config);
-  return template
-    .replace("{{TITLE}}", title)
-    .replace("{{STYLES}}", styles)
-    .replace("{{CONTENT}}", stripped);
+
+  const replacements = {
+    "{{TITLE}}": `${c.name} — ${docTitle}`,
+    "{{STYLES}}": styles,
+    "{{DOC_TYPE}}": docLabel,
+    "{{COMPANY_NAME}}": c.name,
+    "{{TAGLINE}}": c.tagline ?? "",
+    "{{DOCUMENT_TITLE}}": docTitle,
+    "{{DATE}}": today,
+    "{{SECTIONS}}": sectionsHtml,
+    "{{CONTACT_EMAIL}}": c.contact_email ?? "",
+    "{{WEBSITE}}": c.website ?? "",
+  };
+  for (const [token, value] of Object.entries(replacements)) {
+    html = html.split(token).join(value);
+  }
+  return html;
+}
+
+export function latestInboxFile() {
+  if (!fs.existsSync(INBOX_DIR)) return null;
+  const candidates = fs
+    .readdirSync(INBOX_DIR)
+    .map((name) => path.join(INBOX_DIR, name))
+    .filter(
+      (p) =>
+        fs.statSync(p).isFile() &&
+        READABLE_EXTENSIONS.has(path.extname(p).toLowerCase()) &&
+        path.basename(p) !== "README.txt"
+    );
+  if (!candidates.length) return null;
+  return candidates.sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs)[0];
+}
+
+export function archiveInboxFile(filePath) {
+  fs.mkdirSync(INBOX_DONE_DIR, { recursive: true });
+  const base = path.basename(filePath);
+  let dest = path.join(INBOX_DONE_DIR, base);
+  if (fs.existsSync(dest)) {
+    const ext = path.extname(base);
+    const stem = path.basename(base, ext);
+    dest = path.join(INBOX_DONE_DIR, `${stem}-${new Date().toISOString().slice(0, 10)}${ext}`);
+  }
+  fs.renameSync(filePath, dest);
 }
 
 export function brandSummary(config) {
   const c = config.company;
   return `Brand loaded: ${c.name} | primary ${config.colors.primary} | fonts ${config.fonts.heading} / ${config.fonts.body}`;
 }
+
+// Backward-compatible alias
+export const buildBrandSystemPrompt = buildJsonSystemPrompt;
