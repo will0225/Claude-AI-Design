@@ -64,77 +64,95 @@ def smoke_test(client) -> None:
     print(f"\nClaude ({DEFAULT_MODEL}):\n{reply}\n")
 
 
-def prompt_summarize(client) -> None:
-    """Example 1: Structured summarization with explicit output format."""
+def prompt_discovery(client) -> None:
+    """Example 1: Discovery call notes → client-ready proposal outline."""
     print("=" * 60)
-    print("EXAMPLE 1 — Meeting notes → action items")
+    print("EXAMPLE 1 — Discovery call → proposal outline")
     print("=" * 60)
     notes = """
-    Team sync 2026-06-30: Sarah said the landing page copy is overdue.
-    Mike will deploy the staging build by Friday. We need legal review on
-    the privacy policy before launch. Budget approved for one contractor
-    through Q3. Next sync Tuesday 10am.
+    Discovery call 2026-06-30 with Jordan (COO), Brightline Marketing, ~12 staff.
+    Pain: client reporting takes 6+ hrs/week; proposal drafts inconsistent across team.
+    Tried ChatGPT Team — outputs vary too much, hard to reuse prompts.
+    Wants Claude wired into daily workflow; open to Python script or Zapier if simpler.
+    Budget: $5–8k for setup + training. Timeline: live in 3 weeks before Q3 campaigns.
+    Must loop in IT on API/data policy. Competitor quote pending from another vendor.
+    Jordan asked for a scope doc by Friday; decision by next Tuesday.
     """
     reply = ask(
         client,
         system=(
-            "You extract action items from meeting notes. "
-            "Output exactly three sections: Summary (2 sentences), "
-            "Action Items (bulleted, owner + deadline), Open Questions."
+            "You are a consultant turning discovery call notes into a proposal outline. "
+            "Output exactly four sections: Client Snapshot (3 bullets), Stated Needs, "
+            "Proposed Scope (bulleted deliverables tagged S/M/L for effort), "
+            "Next Steps (owner + date). Use client-ready language; avoid internal jargon."
         ),
-        user=f"Meeting notes:\n{notes.strip()}",
+        user=f"Discovery call notes:\n{notes.strip()}",
+        max_tokens=1536,
     )
     print(f"\nClaude:\n{reply}\n")
 
 
-def prompt_draft_email(client) -> None:
-    """Example 2: Tone-controlled drafting with constraints."""
+def prompt_status_email(client) -> None:
+    """Example 2: Recurring weekly client status update."""
     print("=" * 60)
-    print("EXAMPLE 2 — Draft a professional email")
+    print("EXAMPLE 2 — Weekly client status update")
     print("=" * 60)
     reply = ask(
         client,
         system=(
-            "You write concise business email drafts. "
-            "Use a warm but professional tone. "
-            "Never use exclamation marks. Keep under 120 words."
+            "You write weekly project status emails for consulting clients. "
+            "Structure exactly: Subject line, Progress This Week (3 bullets), "
+            "Blockers (one bullet or 'None'), Plan for Next Week (3 bullets), "
+            "Ask of Client (one sentence or 'None'). "
+            "Tone: confident and transparent. Body under 150 words. No exclamation marks."
         ),
         user=(
-            "Draft an email to a client named Alex explaining that their "
-            "project delivery will slip by one week due to an unexpected "
-            "third-party API change. Offer a brief call to walk through options."
+            "Client: Northwind Digital. Project: Claude workflow setup.\n"
+            "This week: completed API setup and demo script; drafted three tailored prompts; "
+            "shared setup guide for their team.\n"
+            "Blocker: waiting on their legal team to approve API usage policy.\n"
+            "Next week: handoff screen share; customize prompts for client reporting workflow; "
+            "document Zapier option for non-technical staff.\n"
+            "Ask: confirm handoff call slot (Tue or Wed afternoon)."
         ),
     )
     print(f"\nClaude:\n{reply}\n")
 
 
-def prompt_code_review(client) -> None:
-    """Example 3: Focused code review with severity labels."""
+def prompt_research_brief(client) -> None:
+    """Example 3: Messy research notes → executive brief."""
     print("=" * 60)
-    print("EXAMPLE 3 — Code review snippet")
+    print("EXAMPLE 3 — Research notes → executive brief")
     print("=" * 60)
-    code = '''
-def get_user(user_id):
-    query = f"SELECT * FROM users WHERE id = {user_id}"
-    return db.execute(query).fetchone()
-'''
+    notes = """
+    Research re: AI tooling for Brightline's workflow automation RFP response.
+    - Claude API: strong long-document handling; official Python + Node SDKs.
+    - OpenAI GPT-4o: larger plugin ecosystem; team already has some ChatGPT seats.
+    - Anthropic API data: not used for training by default — important for client data.
+    - Zapier / Make: both have Anthropic connectors; good for marketing ops, ~$20+/mo.
+    - Pricing: Haiku cheapest/high volume; Sonnet best balance; Opus for heavy reasoning.
+    - Claude.ai Projects: may suffice for non-technical staff without API spend.
+    - [UNVERIFIED] Gemini Enterprise may integrate better with Google Workspace.
+    - Client priority: repeatable prompts, clear handoff docs, minimal engineering lift.
+    """
     reply = ask(
         client,
         system=(
-            "You are a senior engineer doing code review. "
-            "List issues as: [CRITICAL], [WARNING], or [SUGGESTION]. "
-            "For each issue, give a one-line fix. Max 5 items."
+            "You synthesize raw research notes into an executive brief for a client RFP. "
+            "Output: Headline (one sentence), Key Findings (5 bullets), "
+            "Implications for This Client (3 bullets), Recommended Actions (numbered, max 3). "
+            "Preserve [UNVERIFIED] tags on any unconfirmed claims."
         ),
-        user=f"Review this Python function:\n```python{code}\n```",
-        max_tokens=512,
+        user=f"Research notes:\n{notes.strip()}",
+        max_tokens=1536,
     )
     print(f"\nClaude:\n{reply}\n")
 
 
 EXAMPLES = {
-    "summarize": prompt_summarize,
-    "email": prompt_draft_email,
-    "code-review": prompt_code_review,
+    "discovery": prompt_discovery,
+    "status-email": prompt_status_email,
+    "research-brief": prompt_research_brief,
 }
 
 
@@ -164,7 +182,7 @@ def main() -> None:
         EXAMPLES[args.example](client)
     else:
         print("Tip: run with --all to see three tailored example prompts.")
-        print("     python claude_demo.py --example summarize\n")
+        print("     python claude_demo.py --example discovery\n")
 
 
 if __name__ == "__main__":

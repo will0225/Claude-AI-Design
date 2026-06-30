@@ -62,7 +62,7 @@ python claude_demo.py --all    # or: npm run demo:all
 ```
 
 - [ ] All three examples produce relevant output
-- [ ] Walk through one prompt's **system** vs **user** split (see [EXAMPLE_PROMPTS.md](./EXAMPLE_PROMPTS.md))
+- [ ] Walk through Example 1 (discovery → proposal) **system** vs **user** split (see [EXAMPLE_PROMPTS.md](./EXAMPLE_PROMPTS.md))
 - [ ] Client identifies which example maps closest to their daily work
 
 ### 5. "Can you rebuild without me?" test (5 min)
@@ -104,7 +104,7 @@ Use this section during the call for client-specific details:
 | Item | Value |
 |------|-------|
 | Preferred stack (Python / Node) | |
-| Primary use case #1 | |
-| Primary use case #2 | |
+| Primary use case #1 (e.g. discovery → proposals) | |
+| Primary use case #2 (e.g. weekly client updates) | |
 | Monthly usage budget | |
 | Follow-up date | |

@@ -1,6 +1,6 @@
 # Claude AI Setup Kit
 
-A clean, repeatable starter kit for integrating [Anthropic Claude](https://www.anthropic.com) into your daily workflow. Includes working demo scripts (Python and Node.js), setup documentation, and three production-ready prompt patterns.
+A clean, repeatable starter kit for integrating [Anthropic Claude](https://www.anthropic.com) into your daily workflow. Includes working demo scripts (Python and Node.js), setup documentation, and three prompt patterns tailored for **consultants and professional-services teams**.
 
 ## Quick start
 
@@ -44,8 +44,8 @@ python claude_demo.py --all
 npm run demo:all
 
 # Single example
-python claude_demo.py --example summarize
-node claude_demo.js --example email
+python claude_demo.py --example discovery
+node claude_demo.js --example status-email
 ```
 
 ## Requirements

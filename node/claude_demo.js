@@ -53,67 +53,85 @@ async function smokeTest(client) {
   console.log(`\nClaude (${DEFAULT_MODEL}):\n${reply}\n`);
 }
 
-async function promptSummarize(client) {
+async function promptDiscovery(client) {
   console.log("=".repeat(60));
-  console.log("EXAMPLE 1 — Meeting notes → action items");
+  console.log("EXAMPLE 1 — Discovery call → proposal outline");
   console.log("=".repeat(60));
   const notes = `
-    Team sync 2026-06-30: Sarah said the landing page copy is overdue.
-    Mike will deploy the staging build by Friday. We need legal review on
-    the privacy policy before launch. Budget approved for one contractor
-    through Q3. Next sync Tuesday 10am.
+    Discovery call 2026-06-30 with Jordan (COO), Brightline Marketing, ~12 staff.
+    Pain: client reporting takes 6+ hrs/week; proposal drafts inconsistent across team.
+    Tried ChatGPT Team — outputs vary too much, hard to reuse prompts.
+    Wants Claude wired into daily workflow; open to Python script or Zapier if simpler.
+    Budget: $5–8k for setup + training. Timeline: live in 3 weeks before Q3 campaigns.
+    Must loop in IT on API/data policy. Competitor quote pending from another vendor.
+    Jordan asked for a scope doc by Friday; decision by next Tuesday.
   `;
   const reply = await ask(client, {
     system:
-      "You extract action items from meeting notes. " +
-      "Output exactly three sections: Summary (2 sentences), " +
-      "Action Items (bulleted, owner + deadline), Open Questions.",
-    user: `Meeting notes:\n${notes.trim()}`,
+      "You are a consultant turning discovery call notes into a proposal outline. " +
+      "Output exactly four sections: Client Snapshot (3 bullets), Stated Needs, " +
+      "Proposed Scope (bulleted deliverables tagged S/M/L for effort), " +
+      "Next Steps (owner + date). Use client-ready language; avoid internal jargon.",
+    user: `Discovery call notes:\n${notes.trim()}`,
+    maxTokens: 1536,
   });
   console.log(`\nClaude:\n${reply}\n`);
 }
 
-async function promptDraftEmail(client) {
+async function promptStatusEmail(client) {
   console.log("=".repeat(60));
-  console.log("EXAMPLE 2 — Draft a professional email");
+  console.log("EXAMPLE 2 — Weekly client status update");
   console.log("=".repeat(60));
   const reply = await ask(client, {
     system:
-      "You write concise business email drafts. " +
-      "Use a warm but professional tone. " +
-      "Never use exclamation marks. Keep under 120 words.",
+      "You write weekly project status emails for consulting clients. " +
+      "Structure exactly: Subject line, Progress This Week (3 bullets), " +
+      "Blockers (one bullet or 'None'), Plan for Next Week (3 bullets), " +
+      "Ask of Client (one sentence or 'None'). " +
+      "Tone: confident and transparent. Body under 150 words. No exclamation marks.",
     user:
-      "Draft an email to a client named Alex explaining that their " +
-      "project delivery will slip by one week due to an unexpected " +
-      "third-party API change. Offer a brief call to walk through options.",
+      "Client: Northwind Digital. Project: Claude workflow setup.\n" +
+      "This week: completed API setup and demo script; drafted three tailored prompts; " +
+      "shared setup guide for their team.\n" +
+      "Blocker: waiting on their legal team to approve API usage policy.\n" +
+      "Next week: handoff screen share; customize prompts for client reporting workflow; " +
+      "document Zapier option for non-technical staff.\n" +
+      "Ask: confirm handoff call slot (Tue or Wed afternoon).",
   });
   console.log(`\nClaude:\n${reply}\n`);
 }
 
-async function promptCodeReview(client) {
+async function promptResearchBrief(client) {
   console.log("=".repeat(60));
-  console.log("EXAMPLE 3 — Code review snippet");
+  console.log("EXAMPLE 3 — Research notes → executive brief");
   console.log("=".repeat(60));
-  const code = `
-def get_user(user_id):
-    query = f"SELECT * FROM users WHERE id = {user_id}"
-    return db.execute(query).fetchone()
-`;
+  const notes = `
+    Research re: AI tooling for Brightline's workflow automation RFP response.
+    - Claude API: strong long-document handling; official Python + Node SDKs.
+    - OpenAI GPT-4o: larger plugin ecosystem; team already has some ChatGPT seats.
+    - Anthropic API data: not used for training by default — important for client data.
+    - Zapier / Make: both have Anthropic connectors; good for marketing ops, ~$20+/mo.
+    - Pricing: Haiku cheapest/high volume; Sonnet best balance; Opus for heavy reasoning.
+    - Claude.ai Projects: may suffice for non-technical staff without API spend.
+    - [UNVERIFIED] Gemini Enterprise may integrate better with Google Workspace.
+    - Client priority: repeatable prompts, clear handoff docs, minimal engineering lift.
+  `;
   const reply = await ask(client, {
     system:
-      "You are a senior engineer doing code review. " +
-      "List issues as: [CRITICAL], [WARNING], or [SUGGESTION]. " +
-      "For each issue, give a one-line fix. Max 5 items.",
-    user: `Review this Python function:\n\`\`\`python${code}\n\`\`\``,
-    maxTokens: 512,
+      "You synthesize raw research notes into an executive brief for a client RFP. " +
+      "Output: Headline (one sentence), Key Findings (5 bullets), " +
+      "Implications for This Client (3 bullets), Recommended Actions (numbered, max 3). " +
+      "Preserve [UNVERIFIED] tags on any unconfirmed claims.",
+    user: `Research notes:\n${notes.trim()}`,
+    maxTokens: 1536,
   });
   console.log(`\nClaude:\n${reply}\n`);
 }
 
 const EXAMPLES = {
-  summarize: promptSummarize,
-  email: promptDraftEmail,
-  "code-review": promptCodeReview,
+  discovery: promptDiscovery,
+  "status-email": promptStatusEmail,
+  "research-brief": promptResearchBrief,
 };
 
 async function main() {
@@ -136,7 +154,7 @@ async function main() {
     await EXAMPLES[exampleName](client);
   } else if (!runAll) {
     console.log("Tip: run with --all to see three tailored example prompts.");
-    console.log("     node claude_demo.js --example summarize\n");
+    console.log("     node claude_demo.js --example discovery\n");
   }
 }
 
