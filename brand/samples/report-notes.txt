@@ -1,0 +1,26 @@
+Q2 2026 Client Performance Report — Northwind Digital (retainer client)
+
+Scope: Reviewed Google Analytics, Meta Ads, and email campaign data for April–June 2026.
+
+Key metrics:
+- Website sessions: 48,200 (+12% vs Q1)
+- Paid social ROAS: 3.2x (target was 2.8x)
+- Email open rate: 34% (industry avg ~21%)
+- Top landing page: /product-launch — 8,400 sessions, 6.1% conversion
+- Underperformer: /blog/resources — high traffic, 0.4% conversion
+
+Findings:
+1. Product launch campaign exceeded ROAS target; recommend increasing budget 15% in Q3.
+2. Blog traffic is strong but CTAs are buried below fold on mobile.
+3. Email segment "inactive 90 days" has 2,100 contacts — win-back campaign untapped.
+4. Meta creative fatigue on ad set "Summer Promo A" — CTR dropped 40% over 6 weeks.
+
+Recommendations:
+- Reallocate $2,000/mo from underperforming display to Meta retargeting.
+- A/B test sticky mobile CTA on top 5 blog posts.
+- Launch 3-email win-back sequence in July.
+- Refresh Summer Promo A creative before August push.
+
+Notes:
+- Client asked for more detail on competitor benchmarking — not in scope this quarter.
+- Legal approved use of aggregated data in external reports.

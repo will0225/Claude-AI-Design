@@ -1,0 +1,87 @@
+# =============================================================================
+# BRAND CONFIG — edit once, never tell Claude your fonts/colors again
+# =============================================================================
+# Copy this file to brand.config.yaml and fill in YOUR values:
+#   cp brand.config.example.yaml brand.config.yaml
+#
+# Every proposal and report script reads this file automatically.
+# =============================================================================
+
+company:
+  name: "Your Company Name"
+  tagline: "Your tagline here"
+  website: "https://yourcompany.com"
+  contact_email: "hello@yourcompany.com"
+  contact_phone: ""
+
+# Hex colors — use your exact brand palette
+colors:
+  primary: "#1a365d"       # main brand color (headers, buttons)
+  secondary: "#2b6cb0"     # subheadings, links
+  accent: "#ed8936"        # highlights, call-to-action
+  text: "#1a202c"          # body text
+  text_light: "#718096"    # captions, footnotes
+  background: "#ffffff"    # page background
+  surface: "#f7fafc"       # shaded sections, table stripes
+  border: "#e2e8f0"        # dividers, table borders
+
+# Fonts — names must match Google Fonts or installed system fonts
+fonts:
+  heading: "Montserrat"
+  body: "Open Sans"
+  # Google Fonts URLs (leave blank if using local/custom fonts only)
+  heading_url: "https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap"
+  body_url: "https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap"
+
+# How every document should sound — Claude applies this without asking
+writing_style:
+  tone: "professional, confident, and approachable"
+  voice: 'Use first-person plural ("we", "our") when speaking as the company'
+  avoid:
+    - "jargon and buzzwords"
+    - "exclamation marks"
+    - "overly long paragraphs"
+  paragraph_style: "2–4 sentences per paragraph"
+  audience: "business decision-makers"
+
+# Proposal structure — sections Claude must include, in this order
+proposal:
+  sections:
+    - name: "Executive Summary"
+      description: "2–3 sentences: what you are proposing and the outcome"
+    - name: "Understanding Your Needs"
+      description: "Reflect the client's situation in their language"
+    - name: "Proposed Approach"
+      description: "Phased deliverables with clear outcomes per phase"
+    - name: "Timeline & Investment"
+      description: "Table or bullets: milestone, date, cost if known"
+    - name: "Why Work With Us"
+      description: "2–3 differentiators relevant to this client"
+    - name: "Next Steps"
+      description: "One clear call-to-action with date"
+
+# Report structure — sections Claude must include, in this order
+report:
+  sections:
+    - name: "Executive Summary"
+      description: "One paragraph: bottom-line findings"
+    - name: "Scope & Methodology"
+      description: "What was analyzed and how"
+    - name: "Key Findings"
+      description: "Numbered findings with supporting detail"
+    - name: "Analysis"
+      description: "What the findings mean for the reader"
+    - name: "Recommendations"
+      description: "Prioritized actions with rationale"
+    - name: "Appendix"
+      description: "Data notes, sources, or caveats"
+
+# Rules Claude must follow on every document (do not remove)
+behavior:
+  never_ask_about:
+    - "brand colors"
+    - "fonts or typography"
+    - "company name or contact details"
+    - "document section structure"
+    - "writing tone or voice"
+  if_detail_missing: "Use a sensible placeholder marked [FILL IN: brief description] — do not ask the user"

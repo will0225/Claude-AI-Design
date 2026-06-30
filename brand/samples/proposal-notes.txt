@@ -1,0 +1,31 @@
+Discovery call 2026-06-30 — Jordan, COO at Northwind Digital
+
+Situation:
+- 12-person marketing team, growing fast
+- Client reporting takes 6+ hours per week across the team
+- Proposal quality varies by who writes it; brand looks inconsistent
+- They tried ChatGPT Team but outputs don't match company style
+
+What they want:
+- Claude integrated into daily workflow for proposals and client reports
+- Branded documents that match their existing look (fonts, colors)
+- Setup they can maintain without a developer on call
+
+Budget & timeline:
+- Budget: $5,000–$8,000 for setup and training
+- Want live before Q3 campaign season (~3 weeks)
+- Legal needs to approve API/data policy first
+
+Our proposed approach:
+- Phase 1 (Week 1): Brand config file with their fonts/colors, demo scripts
+- Phase 2 (Week 2): Custom proposal + report templates, team training
+- Phase 3 (Week 3): Handoff, Zapier option for non-technical staff
+
+Next steps:
+- Send scope document by Friday
+- Decision expected following Tuesday
+- Intro call with their IT contact on data policy
+
+Differentiators to mention:
+- One-time brand setup — never repeat fonts/colors to Claude again
+- Clear handoff documentation they can rebuild without us

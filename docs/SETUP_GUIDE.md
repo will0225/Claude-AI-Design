@@ -2,6 +2,8 @@
 
 This guide walks you through creating an Anthropic account, securing your API key, and running the included demo scripts on your machine. Follow the steps in order; the whole process takes about 15 minutes.
 
+> **Primary workflow:** If you need **branded proposals and reports** (fonts, colors, format applied automatically), start with [BRAND_SETUP.md](./BRAND_SETUP.md) after completing steps 1–3 below.
+
 ---
 
 ## 1. Create an Anthropic account

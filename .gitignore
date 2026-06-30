@@ -1,7 +1,11 @@
-# Secrets — never commit real API keys
+# Secrets — never commit real API keys or client brand config
 .env
 .env.local
 .env.*.local
+brand/brand.config.yaml
+
+# Generated documents
+brand/output/*.html
 
 # Python
 __pycache__/

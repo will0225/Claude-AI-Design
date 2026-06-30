@@ -1,202 +1,150 @@
 # Three Example Prompts (and Why They Work)
 
-These prompts are tailored for **consultants and professional-services teams** — discovery calls, client updates, and research synthesis. They are built into `claude_demo.py` / `claude_demo.js`.
+These examples match the client's core need: **branded proposals and reports without repeating fonts, colors, or format**.
 
-Run them with:
+The recommended workflow is `generate_document.py`, which loads `brand/brand.config.yaml` automatically. The patterns below explain *why* that design works — and how to tune it.
+
+---
+
+## Example 1 — Branded proposal from discovery notes
+
+### Use case
+
+Turn discovery call notes into a fully styled proposal HTML file — company colors, fonts, and section structure applied with zero brand questions.
+
+### How to run
 
 ```bash
-python claude_demo.py --all
-# or
-npm run demo:all
+python generate_document.py proposal --input ../brand/samples/proposal-notes.txt
 ```
 
-Each example follows a repeatable pattern you can copy for your own use cases.
+### What Claude receives (automatic)
 
----
-
-## Example 1 — Discovery call → proposal outline
-
-### Use case
-
-After a sales or discovery call, turn rough notes into a client-ready scope outline you can send within hours — without rewriting from scratch.
-
-### System prompt
+**System prompt (from `brand.config.yaml` — you never paste this):**
 
 ```
-You are a consultant turning discovery call notes into a proposal outline.
-Output exactly four sections: Client Snapshot (3 bullets), Stated Needs,
-Proposed Scope (bulleted deliverables tagged S/M/L for effort),
-Next Steps (owner + date). Use client-ready language; avoid internal jargon.
+Company: [your company]
+Colors: primary #..., secondary #..., accent #...
+Fonts: [heading] / [body]
+Writing style: professional, no exclamation marks, …
+Proposal sections: Executive Summary → Understanding Your Needs → …
+NEVER ask about brand colors, fonts, or structure.
 ```
 
-### User prompt (sample input)
+**User message (you provide):**
 
 ```
-Discovery call notes:
-Discovery call 2026-06-30 with Jordan (COO), Brightline Marketing, ~12 staff.
-Pain: client reporting takes 6+ hrs/week; proposal drafts inconsistent across team.
-Tried ChatGPT Team — outputs vary too much, hard to reuse prompts.
-Wants Claude wired into daily workflow; open to Python script or Zapier if simpler.
-Budget: $5–8k for setup + training. Timeline: live in 3 weeks before Q3 campaigns.
-Must loop in IT on API/data policy. Competitor quote pending from another vendor.
-Jordan asked for a scope doc by Friday; decision by next Tuesday.
+Create a proposal from the following source material…
+--- SOURCE MATERIAL ---
+[paste discovery notes]
 ```
 
 ### Why it works
 
 | Technique | What it does |
 |-----------|--------------|
-| **Fixed four-section schema** | Mirrors how clients expect proposals: who they are, what they need, what you'll deliver, what's next. |
-| **Effort tags (S/M/L)** | Forces realistic scoping instead of an open-ended task list. |
-| **Client-ready language rule** | Strips internal shorthand ("loop in IT") into polished copy you can edit lightly and send. |
-| **Separation of concerns** | System = format and tone; user = raw call notes you paste after every discovery call. |
+| **Config file as system prompt** | Brand rules are sent on *every* call — not stored in chat memory that gets lost. |
+| **Explicit "never ask" rules** | Stops the "50 questions" loop about colors and fonts. |
+| **`[FILL IN]` for missing project data** | Only project-specific gaps get placeholders — not brand basics. |
+| **Fixed section schema in YAML** | Proposal structure lives in config; reorder sections without rewriting prompts. |
 
 ### When to adapt
 
-- Add a **Pricing Options** section (good/better/best tiers).
-- Include **Out of Scope** bullets to prevent scope creep.
-- Increase `max_tokens` to 2048 for longer enterprise discovery calls.
+- Edit `proposal.sections` in `brand.config.yaml` to match their real proposal template.
+- Add pricing tiers or terms sections as needed.
 
 ---
 
-## Example 2 — Weekly client status update
+## Example 2 — Branded quarterly report
 
 ### Use case
 
-Send a consistent Friday status email across all active engagements — progress, blockers, next week, and one clear ask.
+Turn raw performance data and bullet notes into a client-ready report with the same brand as proposals — no second setup.
 
-### System prompt
-
-```
-You write weekly project status emails for consulting clients.
-Structure exactly: Subject line, Progress This Week (3 bullets),
-Blockers (one bullet or 'None'), Plan for Next Week (3 bullets),
-Ask of Client (one sentence or 'None').
-Tone: confident and transparent. Body under 150 words. No exclamation marks.
-```
-
-### User prompt
-
-```
-Client: Northwind Digital. Project: Claude workflow setup.
-This week: completed API setup and demo script; drafted three tailored prompts;
-shared setup guide for their team.
-Blocker: waiting on their legal team to approve API usage policy.
-Next week: handoff screen share; customize prompts for client reporting workflow;
-document Zapier option for non-technical staff.
-Ask: confirm handoff call slot (Tue or Wed afternoon).
-```
-
-### Why it works
-
-| Technique | What it does |
-|-----------|--------------|
-| **Repeatable weekly structure** | Same sections every week — clients know where to look; you fill in bullet facts only. |
-| **Explicit blocker field** | Surfaces risks early instead of burying them in prose. |
-| **Single "Ask of Client"** | One CTA per email improves response rates vs. multiple requests. |
-| **Hard word limit** | Keeps updates scannable for busy executives. |
-
-### When to adapt
-
-- Add **Budget/Timeline Status** (green/yellow/red) for fixed-fee projects.
-- Paste your email sign-off into the system prompt for consistent branding.
-- For internal standups, swap "Ask of Client" for "Decisions Needed."
-
----
-
-## Example 3 — Research notes → executive brief
-
-### Use case
-
-Synthesize messy competitive research, tool comparisons, or market notes into a brief you can attach to a proposal or share with a client stakeholder.
-
-### System prompt
-
-```
-You synthesize raw research notes into an executive brief for a client RFP.
-Output: Headline (one sentence), Key Findings (5 bullets),
-Implications for This Client (3 bullets), Recommended Actions (numbered, max 3).
-Preserve [UNVERIFIED] tags on any unconfirmed claims.
-```
-
-### User prompt
-
-```
-Research notes:
-Research re: AI tooling for Brightline's workflow automation RFP response.
-- Claude API: strong long-document handling; official Python + Node SDKs.
-- OpenAI GPT-4o: larger plugin ecosystem; team already has some ChatGPT seats.
-- Anthropic API data: not used for training by default — important for client data.
-- Zapier / Make: both have Anthropic connectors; good for marketing ops, ~$20+/mo.
-- Pricing: Haiku cheapest/high volume; Sonnet best balance; Opus for heavy reasoning.
-- Claude.ai Projects: may suffice for non-technical staff without API spend.
-- [UNVERIFIED] Gemini Enterprise may integrate better with Google Workspace.
-- Client priority: repeatable prompts, clear handoff docs, minimal engineering lift.
-```
-
-### Why it works
-
-| Technique | What it does |
-|-----------|--------------|
-| **Headline first** | Forces a one-sentence thesis before detail — execs get the point immediately. |
-| **Findings vs. implications split** | Separates facts from "so what for this client," which is what they're paying for. |
-| **Capped recommendations (max 3)** | Prevents analysis paralysis; you sound decisive, not encyclopedic. |
-| **[UNVERIFIED] preservation** | Keeps honest uncertainty visible — critical when research feeds client decisions. |
-
-### When to adapt
-
-- Add a **Sources** section if you need auditability.
-- Change "Implications for This Client" to match the prospect name from Example 1.
-- Use for vendor comparisons, policy research, or industry trend scans.
-
----
-
-## Prompt design cheat sheet
-
-Use this when writing your own prompts:
-
-1. **Role** — Who is Claude in this task? ("You are a consultant …")
-2. **Task** — One clear verb phrase. ("Turn … into …", "Write …", "Synthesize …")
-3. **Format** — Exact sections, bullets, tags, or word count.
-4. **Constraints** — Tone, audience, things to avoid.
-5. **Input** — Put variable data (notes, facts, names) in the user message.
-
-### Anti-patterns to avoid
-
-- Vague asks: "Make this better" → specify the output shape instead.
-- Mixing rules and data in one blob → split system vs. user.
-- No output format → you'll get a different shape every time.
-- Overly long system prompts with unused instructions → keep only what affects output.
-
----
-
-## Run individual examples
+### How to run
 
 ```bash
-# Python
-python claude_demo.py --example discovery
-python claude_demo.py --example status-email
-python claude_demo.py --example research-brief
-
-# Node
-node claude_demo.js --example discovery
-node claude_demo.js --example status-email
-node claude_demo.js --example research-brief
+python generate_document.py report --input ../brand/samples/report-notes.txt
 ```
 
-Edit the `system` and `user` strings in the script to match your real inputs, then iterate until the output is consistently usable with minimal edits.
+### Why it works
+
+| Technique | What it does |
+|-----------|--------------|
+| **Shared brand config** | Proposals and reports pull from the same `brand.config.yaml` — one source of truth. |
+| **Separate section templates** | `report.sections` defines report-specific structure without duplicating colors/fonts. |
+| **HTML + embedded CSS output** | Browser-rendered document with exact hex values; Print → PDF for delivery. |
+| **Consistent writing_style block** | Tone and voice identical across all document types. |
+
+### When to adapt
+
+- Customize `report.sections` for monthly vs. quarterly vs. audit reports.
+- Increase `max_tokens` in `generate_document.py` for very long data sets.
 
 ---
 
-## Industry variants (quick swaps)
+## Example 3 — Claude.ai Project (no-code backup)
 
-If your client is not in consulting, keep the same **system/user split** and swap the content:
+### Use case
 
-| Industry | Example 1 (structured extract) | Example 2 (draft comms) | Example 3 (synthesis) |
-|----------|-------------------------------|---------------------------|------------------------|
-| **Marketing agency** | Campaign kickoff notes → creative brief | Client campaign performance recap | Competitor ad audit notes → strategy memo |
-| **Legal / compliance** | Intake call notes → matter summary | Client update on review status | Regulatory change notes → impact brief |
-| **Real estate** | Buyer consultation → property brief | Weekly listing pipeline update | Neighborhood market stats → seller advisory |
-| **Product / engineering** | User interview notes → feature spec outline | Sprint stakeholder update | Tech evaluation notes → build vs. buy memo |
+For clients who prefer the Claude website: sync the brand config into a Project so web chats also stop asking.
 
-Copy the closest row, paste your client's real notes into the user message, and tune the system prompt sections to match their deliverable names.
+### Setup (one time)
+
+1. Create Project: **"Proposals & Reports"**
+2. Paste into **Project instructions**:
+
+```
+NEVER ask the user for brand colors, fonts, company name, or document structure.
+Use [FILL IN: …] for missing project details only.
+
+[paste entire contents of brand.config.yaml]
+```
+
+3. Always start document work **inside this Project**.
+
+### Why it works
+
+| Technique | What it does |
+|-----------|--------------|
+| **Project-level instructions** | Persists across conversations within the Project (better than blank chat). |
+| **Same YAML content** | Client maintains one file; copy updates to Project when brand changes. |
+| **Explicit never-ask header** | Blocks the repeated "what are your brand colors?" questions. |
+
+### Limitation
+
+Project instructions can drift if edited manually. The **API + config file** approach in `generate_document.py` is more reliable for production use.
+
+---
+
+## Why telling Claude 22 times didn't work
+
+```
+❌ Blank chat → paste brand → ask for proposal → new chat → brand gone
+❌ Long chat → early brand info truncated → Claude asks again
+❌ Projects without strict rules → Claude still clarifies "just to confirm your colors…"
+
+✅ brand.config.yaml → injected every API call → brand always present
+```
+
+---
+
+## Prompt design cheat sheet (for brand documents)
+
+1. **Brand in system prompt** — colors, fonts, tone, sections (loaded from YAML).
+2. **Content in user message** — only project-specific notes and data.
+3. **Never-ask list** — explicitly block questions about design and format.
+4. **Placeholder rule** — `[FILL IN: …]` instead of clarifying questions.
+5. **Output format** — HTML with embedded CSS using exact hex and font names.
+
+---
+
+## Run commands
+
+```bash
+python generate_document.py --show-brand
+python generate_document.py proposal --input my-notes.txt
+python generate_document.py report --input my-data.txt
+```
+
+See [BRAND_SETUP.md](./BRAND_SETUP.md) for the full one-time setup walkthrough.
