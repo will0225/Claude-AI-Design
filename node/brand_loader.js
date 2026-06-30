@@ -1,5 +1,5 @@
 /**
- * Load brand.config.yaml, build prompts, render fixed templates.
+ * Load brand.config.yaml, build prompts, render fixed forensic templates.
  */
 
 import fs from "fs";
@@ -25,7 +25,6 @@ export function loadBrandConfig() {
 ❌ Brand config not found: ${CONFIG_PATH}
    Run once:
      cp ${EXAMPLE_PATH} ${CONFIG_PATH}
-   Then edit brand.config.yaml with your company fonts, colors, and style.
 `);
     process.exit(1);
   }
@@ -39,6 +38,7 @@ export function validateBrandConfig(config) {
     warnings.push("company.name is still the placeholder — set your real company name");
   }
   for (const [key, val] of Object.entries(config.colors ?? {})) {
+    if (String(key).startsWith("_")) continue;
     if (!String(val).startsWith("#")) {
       warnings.push(`colors.${key} should be a hex value like #1a365d`);
     }
@@ -55,6 +55,7 @@ export function sectionSpecs(docType, config) {
     name: s.name,
     slug: sectionSlug(s.name),
     description: s.description,
+    number: s.number ?? "",
   }));
 }
 
@@ -72,15 +73,40 @@ export function buildJsonSystemPrompt(config, docType) {
   const specs = sectionSpecs(docType, config);
 
   const sectionLines = specs
-    .map((s, i) => `  ${i + 1}. ${s.name} (key: \`${s.slug}\`) — ${s.description}`)
+    .map((s) => {
+      const num = s.number ? `${s.number} ` : "";
+      return `  - ${num}${s.name} (key: \`${s.slug}\`) — ${s.description}`;
+    })
     .join("\n");
 
   const jsonKeys = specs
     .map((s) => `    "${s.slug}": "HTML fragment (<p>, <ul>, <table> only — no h1/h2)"`)
     .join(",\n");
 
+  let coverFields = "";
+  let jsonCover = "";
+  if (docType === "report") {
+    coverFields = `
+Also include these cover/metadata fields extracted from source material:
+  - file_number, review_type, property_address, subtitle
+  - prepared_for, property_contact, review_period, issued_date`;
+    jsonCover = `
+  "file_number": "string",
+  "review_type": "string",
+  "property_address": "string",
+  "subtitle": "string",
+  "prepared_for": "string",
+  "property_contact": "string",
+  "review_period": "string",
+  "issued_date": "string",`;
+  }
+
+  const htmlPatterns = config.report_html_patterns ?? "";
+  const patternsBlock =
+    htmlPatterns && docType === "report" ? `\nHTML PATTERNS:\n${htmlPatterns}\n` : "";
+
   const jsonSchema = `{
-  "document_title": "Short title for this specific document",
+  "document_title": "Short title (usually property address)",${jsonCover}
   "sections": {
 ${jsonKeys}
   }
@@ -92,15 +118,16 @@ CRITICAL RULES:
 - NEVER ask the user about: ${neverAsk}.
 - If project-specific detail is missing, ${missingRule} — do not ask questions.
 - Writing tone: ${style.tone}. Voice: ${style.voice}. Avoid: ${avoid}.
-- Paragraphs: ${style.paragraph_style ?? "2–4 sentences"}.
+- Preserve all dollar amounts, dates, suite numbers, finding IDs, and vendor names exactly.
+${coverFields}
 
 SECTIONS (fill every key — same keys every time, in this order):
 ${sectionLines}
-
+${patternsBlock}
 OUTPUT: Return ONLY valid JSON matching this exact schema (no markdown fences, no extra text):
 ${jsonSchema}
 
-Each section value is an HTML fragment (paragraphs, lists, tables). Do NOT include section headings — those are in the template.`;
+Each section value is an HTML fragment. Do NOT include section headings — those are in the template.`;
 }
 
 export function parseJsonResponse(text) {
@@ -117,6 +144,9 @@ export function buildStylesheet(config) {
     "{{PRIMARY}}": colors.primary,
     "{{SECONDARY}}": colors.secondary,
     "{{ACCENT}}": colors.accent,
+    "{{CRITICAL}}": colors.critical ?? "#c53030",
+    "{{HIGH}}": colors.high ?? "#dd6b20",
+    "{{MEDIUM}}": colors.medium ?? "#d69e2e",
     "{{TEXT}}": colors.text,
     "{{TEXT_LIGHT}}": colors.text_light,
     "{{BACKGROUND}}": colors.background,
@@ -135,41 +165,57 @@ export function buildStylesheet(config) {
 
 export function renderFixedDocument(config, docType, payload) {
   const c = config.company;
+  const labels = config.document_labels ?? {};
   const specs = sectionSpecs(docType, config);
   const sectionsData = payload.sections ?? {};
-  const docTitle = payload.document_title ?? docType[0].toUpperCase() + docType.slice(1);
 
   const sectionsHtml = specs
     .map((spec) => {
       const content = sectionsData[spec.slug] ?? '<p class="fill-in">[FILL IN]</p>';
-      return `    <section class="doc-section" id="${spec.slug}">\n      <h2>${spec.name}</h2>\n      <div class="section-body">${content}</div>\n    </section>`;
+      const heading = spec.number
+        ? `<span class="section-num">${spec.number}</span>${spec.name}`
+        : spec.name;
+      return `    <section class="doc-section" id="${spec.slug}">\n      <h2>${heading}</h2>\n      <div class="section-body">${content}</div>\n    </section>`;
     })
     .join("\n");
 
+  const docTypeLabel =
+    docType === "report"
+      ? labels.report_type ?? "Forensic Report"
+      : labels.proposal_type ?? "Proposal";
+
+  const propertyAddress = payload.property_address || payload.document_title || "";
   const today = new Date().toLocaleDateString("en-US", {
     year: "numeric",
-    month: "long",
+    month: "short",
     day: "numeric",
   });
 
   let html = fs.readFileSync(FIXED_TEMPLATE_PATH, "utf8");
-  const docLabel = docType === "proposal" ? "PROPOSAL" : "REPORT";
   const styles = buildStylesheet(config);
 
   const replacements = {
-    "{{TITLE}}": `${c.name} — ${docTitle}`,
+    "{{TITLE}}": `${c.name} — ${propertyAddress || docType}`,
     "{{STYLES}}": styles,
-    "{{DOC_TYPE}}": docLabel,
+    "{{CONFIDENTIAL_LABEL}}": docType === "report" ? labels.confidential ?? "" : "",
+    "{{DOC_TYPE_LABEL}}": docTypeLabel.toUpperCase(),
     "{{COMPANY_NAME}}": c.name,
-    "{{TAGLINE}}": c.tagline ?? "",
-    "{{DOCUMENT_TITLE}}": docTitle,
-    "{{DATE}}": today,
+    "{{PROPERTY_ADDRESS}}": propertyAddress,
+    "{{SUBTITLE}}": payload.subtitle ?? "",
+    "{{FILE_NUMBER}}": payload.file_number ?? "",
+    "{{REVIEW_TYPE}}": payload.review_type ?? "",
+    "{{PREPARED_FOR}}": payload.prepared_for ?? "",
+    "{{PROPERTY_CONTACT}}": payload.property_contact ?? "",
+    "{{REVIEW_PERIOD}}": payload.review_period ?? "",
+    "{{ISSUED_DATE}}": payload.issued_date ?? today,
     "{{SECTIONS}}": sectionsHtml,
+    "{{FOOTER_DISCLAIMER}}": labels.footer_disclaimer ?? "",
     "{{CONTACT_EMAIL}}": c.contact_email ?? "",
-    "{{WEBSITE}}": c.website ?? "",
+    "{{CONTACT_PHONE}}": c.contact_phone ?? "",
+    "{{LICENSE}}": c.license ?? "",
   };
   for (const [token, value] of Object.entries(replacements)) {
-    html = html.split(token).join(value);
+    html = html.split(token).join(String(value));
   }
   return html;
 }
@@ -206,5 +252,4 @@ export function brandSummary(config) {
   return `Brand loaded: ${c.name} | primary ${config.colors.primary} | fonts ${config.fonts.heading} / ${config.fonts.body}`;
 }
 
-// Backward-compatible alias
 export const buildBrandSystemPrompt = buildJsonSystemPrompt;

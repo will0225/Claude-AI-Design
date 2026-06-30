@@ -1,82 +1,95 @@
 # =============================================================================
-# BRAND CONFIG — edit once, never tell Claude your fonts/colors again
+# HVAC ASSET MANAGEMENT — Brand & document templates
 # =============================================================================
-# Copy this file to brand.config.yaml and fill in YOUR values:
+# Copy to brand.config.yaml once:
 #   cp brand.config.example.yaml brand.config.yaml
-#
-# Every proposal and report script reads this file automatically.
 # =============================================================================
 
 company:
-  name: "Your Company Name"
-  tagline: "Your tagline here"
-  website: "https://yourcompany.com"
-  contact_email: "hello@yourcompany.com"
-  contact_phone: ""
+  name: "HVAC Asset Management"
+  tagline: "Forensic Asset & Spend Review"
+  website: ""
+  contact_email: "Audit@hvacasset.com"
+  contact_phone: "(877) 239-7716"
+  license: "CA Lic. #496061"
 
-# Hex colors — use your exact brand palette
+document_labels:
+  report_type: "Forensic Asset & Spend Review"
+  confidential: "CONFIDENTIAL · CLIENT EYES ONLY"
+  footer_disclaimer: >-
+    Prepared by HVAC Asset Management as an independent forensic baseline.
+    Figures reconcile to the client general ledger; recommendations do not
+    constitute engineering certification.
+
 colors:
-  primary: "#1a365d"       # main brand color (headers, buttons)
-  secondary: "#2b6cb0"     # subheadings, links
-  accent: "#ed8936"        # highlights, call-to-action
-  text: "#1a202c"          # body text
-  text_light: "#718096"    # captions, footnotes
-  background: "#ffffff"    # page background
-  surface: "#f7fafc"       # shaded sections, table stripes
-  border: "#e2e8f0"        # dividers, table borders
+  primary: "#0f2744"
+  secondary: "#1a4480"
+  accent: "#c05621"
+  critical: "#c53030"
+  high: "#dd6b20"
+  medium: "#d69e2e"
+  text: "#1a202c"
+  text_light: "#4a5568"
+  background: "#ffffff"
+  surface: "#f7fafc"
+  border: "#e2e8f0"
 
-# Fonts — names must match Google Fonts or installed system fonts
 fonts:
-  heading: "Montserrat"
-  body: "Open Sans"
-  # Google Fonts URLs (leave blank if using local/custom fonts only)
-  heading_url: "https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap"
-  body_url: "https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap"
+  heading: "Libre Franklin"
+  body: "Source Sans 3"
+  heading_url: "https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@600;700&display=swap"
+  body_url: "https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&display=swap"
 
-# How every document should sound — Claude applies this without asking
 writing_style:
-  tone: "professional, confident, and approachable"
-  voice: 'Use first-person plural ("we", "our") when speaking as the company'
+  tone: "forensic, precise, authoritative — suitable for property owners and asset managers"
+  voice: "Third person for findings; direct ACTION lines for recommendations"
   avoid:
-    - "jargon and buzzwords"
+    - "marketing language"
     - "exclamation marks"
-    - "overly long paragraphs"
-  paragraph_style: "2–4 sentences per paragraph"
-  audience: "business decision-makers"
+    - "unsupported speculation"
+  paragraph_style: "2–4 sentences; lead with the finding or number"
+  audience: "property owners, asset managers, and portfolio controllers"
 
-# Proposal structure — sections Claude must include, in this order
-proposal:
-  sections:
-    - name: "Executive Summary"
-      description: "2–3 sentences: what you are proposing and the outcome"
-    - name: "Understanding Your Needs"
-      description: "Reflect the client's situation in their language"
-    - name: "Proposed Approach"
-      description: "Phased deliverables with clear outcomes per phase"
-    - name: "Timeline & Investment"
-      description: "Table or bullets: milestone, date, cost if known"
-    - name: "Why Work With Us"
-      description: "2–3 differentiators relevant to this client"
-    - name: "Next Steps"
-      description: "One clear call-to-action with date"
-
-# Report structure — sections Claude must include, in this order
+# Forensic spend review — fixed section order (matches Standard Review format)
 report:
   sections:
-    - name: "Executive Summary"
-      description: "One paragraph: bottom-line findings"
-    - name: "Scope & Methodology"
-      description: "What was analyzed and how"
-    - name: "Key Findings"
-      description: "Numbered findings with supporting detail"
-    - name: "Analysis"
-      description: "What the findings mean for the reader"
-    - name: "Recommendations"
-      description: "Prioritized actions with rationale"
-    - name: "Appendix"
-      description: "Data notes, sources, or caveats"
+    - number: "00"
+      name: "Executive Summary"
+      description: "Opening narrative plus KPI stat grid (operating spend, capital, rebate, reactive:preventive ratio, comfort complaints, finding counts)"
+    - number: "01"
+      name: "Financial & Contractual Baseline"
+      description: "GL cost-category table, R&M detail table, active service agreement summary"
+    - number: "02"
+      name: "Vendor Performance & Standard-of-Care Audit"
+      description: "Vendor engagement table, quarterly PM execution vs contracted scope with documentation gaps"
+    - number: "03"
+      name: "Asset & Equipment Risk + Capital Plan"
+      description: "Capital replacements placed in service, pending replacements, end-of-life fleet notes"
+    - number: "04"
+      name: "Comfort & Reliability — Hot / Cold Calls"
+      description: "Per-suite complaint timeline — CHRONIC vs RESOLVED, visit dates, spend, warranty notes"
+    - number: "05"
+      name: "Findings, Exposure & Recommendations"
+      description: "Findings F-01+ by severity (CRITICAL/HIGH/MEDIUM) with ACTION lines, prioritized recommendations table, data gaps list"
 
-# Rules Claude must follow on every document (do not remove)
+proposal:
+  sections:
+    - number: "00"
+      name: "Executive Summary"
+      description: "Scope, property, review period, and deliverables overview"
+    - number: "01"
+      name: "Scope of Services"
+      description: "Forensic review activities — GL reconciliation, vendor audit, asset risk, comfort log"
+    - number: "02"
+      name: "Deliverables & Timeline"
+      description: "Report format, issuance date, data required from client"
+    - number: "03"
+      name: "Investment"
+      description: "Fee structure and payment terms"
+    - number: "04"
+      name: "Next Steps"
+      description: "Engagement acceptance and data-request checklist"
+
 behavior:
   never_ask_about:
     - "brand colors"
@@ -84,4 +97,15 @@ behavior:
     - "company name or contact details"
     - "document section structure"
     - "writing tone or voice"
-  if_detail_missing: "Use a sensible placeholder marked [FILL IN: brief description] — do not ask the user"
+    - "report section numbering"
+  if_detail_missing: 'Use <span class="fill-in">[FILL IN: brief description]</span> — do not ask the user'
+
+report_html_patterns: |
+  Use these CSS classes in section HTML fragments:
+  - .kpi-grid > .kpi-card with .kpi-value and .kpi-label for Executive Summary stats
+  - table.data-table for all financial/vendor tables (thead + tbody)
+  - .finding.finding-critical, .finding-high, .finding-medium for findings blocks
+  - .finding-id (e.g. F-01), .finding-title, .finding-action for finding structure
+  - .flag-critical, .flag-high for inline PM/audit flags
+  - .timeline for comfort-call date sequences
+  - .data-gaps for bulleted missing-data list at end of section 05

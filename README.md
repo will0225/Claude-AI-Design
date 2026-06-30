@@ -1,81 +1,64 @@
-# Claude Brand Document Kit
+# Claude Brand Document Kit — HVAC Asset Management
 
-**Download information → drop in inbox → get the same proposal or report every time.**
+Forensic **Standard Review** reports and proposals with a fixed template every time. Pre-configured for **HVAC Asset Management** using the real SRA Northgate H1 2026 report structure.
 
-Your fonts, colors, and section layout are set once. After that, you only provide the raw content.
-
-## Daily workflow (3 steps)
+## Daily workflow
 
 ```
-1. Save/download info  →  brand/inbox/
-2. Run one command     →  python make.py proposal   OR   python make.py report
-3. Open output         →  brand/output/*.html  →  Print → PDF
+1. Drop downloaded GL notes / work orders  →  brand/inbox/
+2. python make.py report
+3. brand/output/*.html  →  Print → PDF
 ```
-
-Full guide → [docs/WORKFLOW.md](./docs/WORKFLOW.md)
 
 ## One-time setup
 
 ```bash
 cp brand/brand.config.example.yaml brand/brand.config.yaml
-# Edit: company name, hex colors, fonts, section names
-
-cd python && cp .env.example .env   # add ANTHROPIC_API_KEY
+cd python && cp .env.example .env   # ANTHROPIC_API_KEY
 pip install -r requirements.txt
 ```
+
+## Generate the Northgate report (real sample included)
+
+```bash
+cd python
+python make.py report --file ../brand/samples/sra-northgate-h1-2026-source.txt
+```
+
+## Fixed report sections (always the same)
+
+| # | Section |
+|---|---------|
+| 00 | Executive Summary |
+| 01 | Financial & Contractual Baseline |
+| 02 | Vendor Performance & Standard-of-Care Audit |
+| 03 | Asset & Equipment Risk + Capital Plan |
+| 04 | Comfort & Reliability — Hot / Cold Calls |
+| 05 | Findings, Exposure & Recommendations |
+
+Cover block always includes: File No., Review type, Prepared for, Property mgr, Review period, Issued date.
 
 ## Commands
 
 ```bash
-cd python
-
-python make.py proposal              # inbox → fixed proposal template
-python make.py report                # inbox → fixed report template
-python make.py proposal --file notes.txt
-
-python generate_document.py --show-brand   # verify brand config
+python make.py report                              # newest inbox file
+python make.py report --file path/to/download.txt  # specific file
+python make.py proposal                            # proposal template
+python generate_document.py --show-brand
 ```
 
-From repo root:
+## Docs
 
-```bash
-chmod +x make-proposal.sh make-report.sh
-./make-proposal.sh
-./make-report.sh
-```
+| Guide | Purpose |
+|-------|---------|
+| [docs/WORKFLOW.md](./docs/WORKFLOW.md) | Daily drop-and-run steps |
+| [docs/BRAND_SETUP.md](./docs/BRAND_SETUP.md) | Colors, fonts, section customization |
+| [docs/HANDOFF_CHECKLIST.md](./docs/HANDOFF_CHECKLIST.md) | Client verification call |
 
-## Two fixed templates
+## Sample data
 
-| Template | Sections (always same order) |
-|----------|------------------------------|
-| **Proposal** | Executive Summary → Understanding Your Needs → Proposed Approach → Timeline & Investment → Why Work With Us → Next Steps |
-| **Report** | Executive Summary → Scope & Methodology → Key Findings → Analysis → Recommendations → Appendix |
-
-Customize sections in `brand/brand.config.yaml`.
-
-## What's included
-
-| Deliverable | Location |
-|-------------|----------|
-| **Drop folder for downloads** | `brand/inbox/` |
-| **One-command generator** | `python/make.py`, `node/make.js` |
-| **Brand config (edit once)** | `brand/brand.config.yaml` |
-| **Daily workflow guide** | [docs/WORKFLOW.md](./docs/WORKFLOW.md) |
-| **Brand setup guide** | [docs/BRAND_SETUP.md](./docs/BRAND_SETUP.md) |
-| **Handoff checklist** | [docs/HANDOFF_CHECKLIST.md](./docs/HANDOFF_CHECKLIST.md) |
-
-## The problem this solves
-
-> "I've told Claude my fonts and colors 22 times and it still asks."
-
-> "When I download information I need it in a report or proposal that are always the same."
-
-Brand rules and document structure live in a **config file + fixed HTML template** — injected automatically. Claude only fills in the content for each section.
-
-## Requirements
-
-- Anthropic API key ([get one here](https://console.anthropic.com/settings/keys))
-- Python 3.9+ or Node.js 18+
+Real forensic review source: `brand/samples/sra-northgate-h1-2026-source.txt`  
+(SRA Northgate · 4600 Northgate Blvd · H1 2026 · File SR-4600NOR-H1-26)
 
 ## License
 

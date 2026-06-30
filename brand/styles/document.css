@@ -7,6 +7,9 @@
   --color-primary: {{PRIMARY}};
   --color-secondary: {{SECONDARY}};
   --color-accent: {{ACCENT}};
+  --color-critical: {{CRITICAL}};
+  --color-high: {{HIGH}};
+  --color-medium: {{MEDIUM}};
   --color-text: {{TEXT}};
   --color-text-light: {{TEXT_LIGHT}};
   --color-background: {{BACKGROUND}};
@@ -37,6 +40,16 @@ header.doc-header {
   margin-bottom: 2rem;
 }
 
+header.doc-header p.confidential {
+  font-family: var(--font-heading);
+  font-size: 8pt;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-critical);
+  margin: 0 0 0.75rem 0;
+}
+
 header.doc-header p.doc-type {
   font-family: var(--font-heading);
   font-size: 9pt;
@@ -44,7 +57,161 @@ header.doc-header p.doc-type {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-accent);
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.35rem 0;
+}
+
+header.doc-header p.property-address {
+  font-family: var(--font-heading);
+  font-size: 13pt;
+  font-weight: 600;
+  color: var(--color-secondary);
+  margin: 0.5rem 0 0.25rem 0;
+}
+
+header.doc-header p.subtitle {
+  font-size: 10pt;
+  color: var(--color-text-light);
+  line-height: 1.5;
+  margin: 0 0 1.25rem 0;
+  max-width: 42rem;
+}
+
+.cover-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem 1.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-primary);
+  padding: 1rem 1.25rem;
+  font-size: 9pt;
+}
+
+.cover-meta .meta-label {
+  display: block;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-light);
+  font-size: 7.5pt;
+  margin-bottom: 0.15rem;
+}
+
+.cover-meta .meta-value {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+section.doc-section h2 .section-num {
+  color: var(--color-accent);
+  margin-right: 0.35rem;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+}
+
+.kpi-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-top: 3px solid var(--color-primary);
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.kpi-card .kpi-label {
+  font-size: 8pt;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-light);
+  margin-bottom: 0.25rem;
+}
+
+.kpi-card .kpi-value {
+  font-family: var(--font-heading);
+  font-size: 14pt;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.kpi-card .kpi-sub {
+  font-size: 8pt;
+  color: var(--color-text-light);
+  margin-top: 0.15rem;
+}
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 9pt;
+}
+
+.finding {
+  border-left: 4px solid var(--color-border);
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  background: var(--color-surface);
+}
+
+.finding-critical { border-left-color: var(--color-critical); }
+.finding-high { border-left-color: var(--color-high); }
+.finding-medium { border-left-color: var(--color-medium); }
+
+.finding .finding-id {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 9pt;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.finding-critical .finding-id { color: var(--color-critical); }
+.finding-high .finding-id { color: var(--color-high); }
+.finding-medium .finding-id { color: var(--color-medium); }
+
+.finding .finding-title {
+  font-weight: 600;
+  margin: 0.25rem 0;
+}
+
+.finding .finding-action {
+  font-size: 9pt;
+  margin-top: 0.5rem;
+  color: var(--color-secondary);
+}
+
+.flag-critical, .flag-high {
+  font-size: 8pt;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.4rem;
+  display: inline-block;
+  margin: 0.5rem 0;
+}
+
+.flag-critical { background: #fed7d7; color: var(--color-critical); }
+.flag-high { background: #feebc8; color: var(--color-high); }
+
+.timeline { margin: 0.75rem 0; padding-left: 1rem; border-left: 2px solid var(--color-border); }
+.timeline .visit-date { font-weight: 600; color: var(--color-secondary); font-size: 9pt; }
+
+.data-gaps { margin-top: 1rem; padding: 0.75rem 1rem; background: var(--color-surface); border: 1px dashed var(--color-border); font-size: 9pt; }
+
+footer.doc-footer .footer-disclaimer {
+  font-size: 8pt;
+  color: var(--color-text-light);
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+footer.doc-footer .footer-contact {
+  font-size: 9pt;
+  font-weight: 600;
 }
 
 section.doc-section {

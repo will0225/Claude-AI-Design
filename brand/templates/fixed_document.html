@@ -10,10 +10,38 @@
 </head>
 <body>
   <header class="doc-header">
-    <p class="doc-type">{{DOC_TYPE}}</p>
+    <p class="confidential">{{CONFIDENTIAL_LABEL}}</p>
+    <p class="doc-type">{{DOC_TYPE_LABEL}}</p>
     <h1 class="company-name">{{COMPANY_NAME}}</h1>
-    <p class="tagline">{{TAGLINE}}</p>
-    <p class="doc-meta">{{DOCUMENT_TITLE}} &nbsp;|&nbsp; {{DATE}}</p>
+    <p class="property-address">{{PROPERTY_ADDRESS}}</p>
+    <p class="subtitle">{{SUBTITLE}}</p>
+
+    <div class="cover-meta">
+      <div class="meta-block">
+        <span class="meta-label">File No.</span>
+        <span class="meta-value">{{FILE_NUMBER}}</span>
+      </div>
+      <div class="meta-block">
+        <span class="meta-label">Review type</span>
+        <span class="meta-value">{{REVIEW_TYPE}}</span>
+      </div>
+      <div class="meta-block">
+        <span class="meta-label">Prepared for</span>
+        <span class="meta-value">{{PREPARED_FOR}}</span>
+      </div>
+      <div class="meta-block">
+        <span class="meta-label">Property mgr</span>
+        <span class="meta-value">{{PROPERTY_CONTACT}}</span>
+      </div>
+      <div class="meta-block">
+        <span class="meta-label">Review period</span>
+        <span class="meta-value">{{REVIEW_PERIOD}}</span>
+      </div>
+      <div class="meta-block">
+        <span class="meta-label">Issued</span>
+        <span class="meta-value">{{ISSUED_DATE}}</span>
+      </div>
+    </div>
   </header>
 
   <main class="doc-body">
@@ -21,7 +49,8 @@
   </main>
 
   <footer class="doc-footer">
-    <p>{{COMPANY_NAME}} &nbsp;|&nbsp; {{CONTACT_EMAIL}} &nbsp;|&nbsp; {{WEBSITE}}</p>
+    <p class="footer-disclaimer">{{FOOTER_DISCLAIMER}}</p>
+    <p class="footer-contact">{{CONTACT_EMAIL}} &nbsp;|&nbsp; {{CONTACT_PHONE}} &nbsp;|&nbsp; {{LICENSE}}</p>
   </footer>
 </body>
 </html>

@@ -61,7 +61,12 @@ def section_slug(name: str) -> str:
 
 def section_specs(doc_type: str, config: dict) -> list[dict]:
     return [
-        {"name": s["name"], "slug": section_slug(s["name"]), "description": s["description"]}
+        {
+            "name": s["name"],
+            "slug": section_slug(s["name"]),
+            "description": s["description"],
+            "number": s.get("number", ""),
+        }
         for s in config.get(doc_type, {}).get("sections", [])
     ]
 
@@ -91,12 +96,45 @@ def build_json_system_prompt(config: dict, doc_type: str) -> str:
 
     section_lines = []
     json_keys = []
-    for i, spec in enumerate(specs, 1):
-        section_lines.append(f"  {i}. {spec['name']} (key: `{spec['slug']}`) — {spec['description']}")
+    for spec in specs:
+        num = f"{spec['number']} " if spec.get("number") else ""
+        section_lines.append(
+            f"  - {num}{spec['name']} (key: `{spec['slug']}`) — {spec['description']}"
+        )
         json_keys.append(f'    "{spec["slug"]}": "HTML fragment (<p>, <ul>, <table> only — no h1/h2)"')
 
     sections_block = "\n".join(section_lines)
-    json_schema = "{\n  \"document_title\": \"Short title for this specific document\",\n  \"sections\": {\n"
+
+    cover_fields = ""
+    json_cover = ""
+    if doc_type == "report":
+        cover_fields = """
+Also include these cover/metadata fields extracted from source material:
+  - file_number (e.g. SR-4600NOR-H1-26)
+  - review_type (e.g. Standard Review)
+  - property_address
+  - subtitle (one-sentence scope statement)
+  - prepared_for (client entity)
+  - property_contact (name and phone)
+  - review_period
+  - issued_date
+"""
+        json_cover = """
+  "file_number": "string",
+  "review_type": "string",
+  "property_address": "string",
+  "subtitle": "string",
+  "prepared_for": "string",
+  "property_contact": "string",
+  "review_period": "string",
+  "issued_date": "string","""
+
+    html_patterns = config.get("report_html_patterns", "")
+    patterns_block = f"\nHTML PATTERNS:\n{html_patterns}\n" if html_patterns and doc_type == "report" else ""
+
+    json_schema = "{\n  \"document_title\": \"Short title (usually property address)\","
+    json_schema += json_cover
+    json_schema += "\n  \"sections\": {\n"
     json_schema += ",\n".join(json_keys)
     json_schema += "\n  }\n}"
 
@@ -107,10 +145,11 @@ CRITICAL RULES:
 - If project-specific detail is missing, {missing_rule} — do not ask questions.
 - Writing tone: {style['tone']}. Voice: {style['voice']}. Avoid: {avoid}.
 - Paragraphs: {style.get('paragraph_style', '2–4 sentences')}.
-
+- Preserve all dollar amounts, dates, suite numbers, finding IDs (F-01, F-02…), and vendor names exactly as in source.
+{cover_fields}
 SECTIONS (fill every key — same keys every time, in this order):
 {sections_block}
-
+{patterns_block}
 OUTPUT: Return ONLY valid JSON matching this exact schema (no markdown fences, no extra text):
 {json_schema}
 
@@ -128,16 +167,20 @@ def parse_json_response(text: str) -> dict:
 def render_fixed_document(config: dict, doc_type: str, payload: dict) -> str:
     """Render JSON content into the fixed HTML template — identical layout every time."""
     c = config["company"]
+    labels = config.get("document_labels", {})
     specs = section_specs(doc_type, config)
     sections_data = payload.get("sections", {})
-    doc_title = payload.get("document_title", doc_type.title())
 
     parts = []
     for spec in specs:
         content = sections_data.get(spec["slug"], '<p class="fill-in">[FILL IN]</p>')
+        num = spec.get("number", "")
+        heading = (
+            f'<span class="section-num">{num}</span>{spec["name"]}' if num else spec["name"]
+        )
         parts.append(
             f'    <section class="doc-section" id="{spec["slug"]}">\n'
-            f'      <h2>{spec["name"]}</h2>\n'
+            f"      <h2>{heading}</h2>\n"
             f'      <div class="section-body">{content}</div>\n'
             f"    </section>"
         )
@@ -145,23 +188,37 @@ def render_fixed_document(config: dict, doc_type: str, payload: dict) -> str:
 
     template = FIXED_TEMPLATE_PATH.read_text(encoding="utf-8")
     styles = build_stylesheet(config)
-    doc_label = "Proposal" if doc_type == "proposal" else "Report"
 
+    doc_type_label = (
+        labels.get("report_type", "Forensic Report")
+        if doc_type == "report"
+        else labels.get("proposal_type", "Proposal")
+    )
+
+    property_address = payload.get("property_address") or payload.get("document_title", "")
     replacements = {
-        "{{TITLE}}": f"{c['name']} — {doc_title}",
+        "{{TITLE}}": f"{c['name']} — {property_address or doc_type.title()}",
         "{{STYLES}}": styles,
-        "{{DOC_TYPE}}": doc_label.upper(),
+        "{{CONFIDENTIAL_LABEL}}": labels.get("confidential", "") if doc_type == "report" else "",
+        "{{DOC_TYPE_LABEL}}": doc_type_label.upper(),
         "{{COMPANY_NAME}}": c["name"],
-        "{{TAGLINE}}": c.get("tagline", ""),
-        "{{DOCUMENT_TITLE}}": doc_title,
-        "{{DATE}}": date.today().strftime("%B %d, %Y"),
+        "{{PROPERTY_ADDRESS}}": property_address,
+        "{{SUBTITLE}}": payload.get("subtitle", ""),
+        "{{FILE_NUMBER}}": payload.get("file_number", ""),
+        "{{REVIEW_TYPE}}": payload.get("review_type", ""),
+        "{{PREPARED_FOR}}": payload.get("prepared_for", ""),
+        "{{PROPERTY_CONTACT}}": payload.get("property_contact", ""),
+        "{{REVIEW_PERIOD}}": payload.get("review_period", ""),
+        "{{ISSUED_DATE}}": payload.get("issued_date", date.today().strftime("%b %d, %Y")),
         "{{SECTIONS}}": sections_html,
+        "{{FOOTER_DISCLAIMER}}": labels.get("footer_disclaimer", ""),
         "{{CONTACT_EMAIL}}": c.get("contact_email", ""),
-        "{{WEBSITE}}": c.get("website", ""),
+        "{{CONTACT_PHONE}}": c.get("contact_phone", ""),
+        "{{LICENSE}}": c.get("license", ""),
     }
     html = template
     for token, value in replacements.items():
-        html = html.replace(token, value)
+        html = html.replace(token, str(value))
     return html
 
 
@@ -269,6 +326,9 @@ def build_stylesheet(config: dict) -> str:
         "{{PRIMARY}}": colors["primary"],
         "{{SECONDARY}}": colors["secondary"],
         "{{ACCENT}}": colors["accent"],
+        "{{CRITICAL}}": colors.get("critical", "#c53030"),
+        "{{HIGH}}": colors.get("high", "#dd6b20"),
+        "{{MEDIUM}}": colors.get("medium", "#d69e2e"),
         "{{TEXT}}": colors["text"],
         "{{TEXT_LIGHT}}": colors["text_light"],
         "{{BACKGROUND}}": colors["background"],

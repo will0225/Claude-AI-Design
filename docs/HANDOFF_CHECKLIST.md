@@ -78,10 +78,10 @@ python make.py report
 
 Client explains back:
 
-- [ ] Where brand lives (`brand/brand.config.yaml`) and how to update colors/fonts
-- [ ] Command to generate a proposal vs. a report
-- [ ] Where output files save (`brand/output/`)
-- [ ] How to sync brand to Claude.ai Project instructions (optional no-code path — see [BRAND_SETUP.md](./BRAND_SETUP.md))
+- [ ] Where to drop downloaded files (`brand/inbox/`)
+- [ ] Command for proposal vs. report (`python make.py proposal` / `report`)
+- [ ] Where output saves (`brand/output/`)
+- [ ] Where to edit template sections (`brand/brand.config.yaml`)
 
 ---
 

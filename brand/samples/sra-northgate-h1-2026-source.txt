@@ -1,0 +1,188 @@
+HVAC ASSET MANAGEMENT
+FORENSIC ASSET & SPEND REVIEW
+CONFIDENTIAL · CLIENT EYES ONLY
+FILE No. SR-4600NOR-H1-26
+Standard Review
+4600 Northgate Boulevard · Sacramento, CA
+A forensic baseline of HVAC operating spend, vendor standard-of-care, equipment risk, and tenant comfort for the review period — built to surface inefficiencies, validate vendor performance, and protect net operating income.
+
+Prepared for
+SRA Northgate, LP
+c/o Seagate Properties
+Property mgr
+Chetta Sinclair
+916-809-1705
+Review period
+Jan – Jun 2026
+Cash basis · H1
+Issued
+Jun 29, 2026
+HVAC Asset Mgmt
+00
+Executive Summary
+Over the first half of 2026 the 4600 building absorbed $11,093 in HVAC operating spend against a $2,876 contracted PM baseline — a 2.9× ratio of reactive repair to preventive maintenance. Spend is concentrated in two suites with aging packaged units. One unit (Suite 4600-120, AC-6) is a chronic failure now approved for heat-pump replacement after $2,444 of May repairs; a $9,000 SMUD rebate was successfully captured on a prior replacement. The forensic flags below center on deferred PM items converting into emergency repairs and an outstanding, un-leveled vendor estimate from the Q1 inspection.
+
+Operating spend · H1
+$11,093
+PM $2,876 · R&M $8,217
+Capital replaced · net
+$38,292
+4 units · gross $47,292
+Rebate captured
+$9,000
+SMUD · Suite 240
+Reactive : preventive
+2.9×
+R&M vs PM contract
+Comfort complaints
+2 suites
+8 visits · 1 chronic
+Forensic findings
+1 critical
++ 2 high · 2 medium
+01
+Financial & Contractual Baseline
+HVAC spend for the 4600 building, by cost category, drawn from the SRA Northgate general ledger (cash book, Jan–Jun 2026). Operating categories are separated from capitalized equipment replacement.
+
+Cost category GL account H1 2026 Basis
+Preventive maintenance (contract) 6420-0200 $2,876.00 2 of 4 quarterly installments
+Repair & maintenance (T&M) 6420-0360 $8,217.05 9 work orders · 6 suites
+Operating subtotal $11,093.05 expensed
+Equipment replacement 1515-0000 $47,292.00 4 units · capitalized
+SMUD rebate (Suite 240) ($9,000.00) credit received
+Total HVAC investment $49,385.05 operating + net capital
+Capital replacements reflect units placed in service over the trailing ~15 months (Mar 2025 – Jun 2026); operating figures are H1 2026 only.
+
+Repair & maintenance detail — where the reactive dollars went
+Date Suite Work performed Vendor Amount
+12/01 4600-100 Assess intermittent heating Solace $633.75
+12/08 4600-100 Replace thermostat / troubleshoot Solace $1,220.98
+12/23 4600-100 Replace roll-out & high-limit switches Solace $683.91
+01/26 4600-145 Evaporator coil cleaning Solace $401.66
+02/02 4600-135 Change thermostat batteries UG2 $150.00
+04/15 4600-207 No heat — replace fuse Solace $517.75
+05/18 4600-120 Replace capacitor & blower motor (no heat) Solace $2,131.50
+05/28 4600-120 2nd-opinion assessment (repair vs replace) Comfort Mech. $312.50
+06/03 4600-220 Blower motor replacement (AC-19) Solace $2,165.00
+Total R&M — H1 2026 $8,217.05
+Active service agreement
+Solace Enterprises, Inc. — 2026 Quarterly PM
+Term Jan 1 – Dec 31, 2026, covering all six buildings (4600–4650). Preventive maintenance only — repairs & replacements are explicitly excluded and billed separately on approved proposals. One-year workmanship guarantee on repairs.
+
+$21,630/yr
+4 × $5,407.50
+portfolio-wide
+02
+Vendor Performance & Standard-of-Care Audit
+Solace Enterprises holds both the PM contract and the majority of reactive repair work — a concentration that warrants independent verification of scope compliance and bid competitiveness. Two other vendors appear in the period.
+
+Vendor Role this period Engagements Spend (H1)
+Solace Enterprises, Inc. PM contract + primary repairs PM + 7 WOs $10,630.55
+Comfort Mechanical, LLC 2nd-opinion diagnostic (AC-6) 1 $312.50
+UG2 LLC Minor repair (tstat batteries) 1 $150.00
+Quarterly PM execution vs. contracted scope
+Q1 — Feb 16–18, 2026
+Job #118617643
+Full mechanical inspection + filter replacement, all six buildings. Technician flagged multiple deficiencies with "estimate to follow": pitted 24V contactors (4600-130, -110; 4640-165), AC#13 inducer-motor bearings scraping (4600-207), seized inducer bearings + belt (4620-120), gas valve not opening + buzzing transformer (4630-150).
+
+ESTIMATE NOT FOUND IN GL — SEE FINDING F-02
+Q2 — May 5–8, 2026
+Job #125221066
+Technician (B. Gill) logged: "check, mechanical, clean condenser coils, swap filters." The contracted Schedule B quarterly checklist contains 14+ inspection points per unit type; the Q2 work-order narrative does not evidence the full checklist or per-unit readings.
+
+DOCUMENTATION GAP — SEE FINDING F-05
+03
+Asset & Equipment Risk + Capital Plan
+Four packaged units have been replaced over the trailing ~15 months and a fifth is approved — evidence of a fleet entering end-of-life. Suite 4600-100 shows a classic chase-the-failure pattern: $2,539 of heating repairs in Dec 2025 preceding a $5,500 compressor replacement.
+
+Placed Unit Suite Scope Cost
+Mar 2025 AC14 4600-210 Full replacement $11,370
+Apr 2025 AC22 4600-211 Full replacement $13,499
+2025 AC#4 4600-100 Failed compressor $5,500
+Dec 2025 AC20 4600-240 Full replacement · rebate captured $16,923
+Pending AC-6 4600-120 Heat-pump replacement — approved 6/3, awaiting curb adaptor TBD
+AC-6 transition to a heat pump continues the SMUD rebate-eligible electrification path established on Suite 240.
+
+04
+Comfort & Reliability — Hot / Cold Calls
+Two suites generated comfort complaints in the period. One is a chronic, multi-visit failure now headed to replacement; the other was resolved in a single repair under warranty.
+
+CHRONIC Suite 4600-120 · AC-6 Choice Parenteral Nutrition
+$2,444 spent → replacement
+05/18
+Temp rising while calling for cooling. Weak capacitor replaced; blower motor then failed and was replaced. Left operating.
+05/22
+Trouble cooling again — coils frozen over; unit shut off to defrost.
+05/26
+Low charge; schrader valves replaced. TXV failing (no work done). Replacement strongly recommended due to age.
+05/28
+2nd opinion (Comfort Mechanical): condenser coil plugged, heat-exchanger pit marks, heavy rust on evaporator coil. Replacement strongly recommended.
+06/03
+Replacement approved — transition to heat pump, SMUD rebate path.
+06/15
+Still pending — vendor has the unit, awaiting curb adaptor. Tenant comfort exposure continues.
+RESOLVED Suite 4600-220 · AC-19 Cleanlyte
+1-yr parts & labor warranty
+06/02
+W-side office string not turning on — failed blower motor diagnosed.
+06/03
+Blower motor replaced; operating normally. 1-year parts & labor warranty — log for recovery.
+05
+Findings, Exposure & Recommendations
+CRITICAL
+F-01
+Chronic unit kept in service while spend accumulated (Suite 4600-120, AC-6)
+Five service visits in 19 days and $2,444 of May repairs preceded the replacement decision. A medical tenant (Choice Parenteral Nutrition) carried comfort risk throughout; as of 6/15 the approved replacement is still pending a curb adaptor.
+
+ACTION › Expedite install — obtain firm date and curb-adaptor ETA from Solace; confirm heat-pump model and SMUD rebate registration before work proceeds.
+HIGH
+F-02
+Q1 PM deficiencies flagged "estimate to follow" — no matching estimate or repair found in the GL
+The 2/16 inspection identified pitted contactors, scraping/seized inducer bearings, a non-opening gas valve and a buzzing transformer across several suites. No corresponding proposal or R&M invoice for those specific items appears in the period ledger; some later no-heat / no-cool emergencies trace to the same equipment.
+
+ACTION › Pull the Solace Q1 estimate, bid-level it, and close or formally defer each line — quantify the deferred-maintenance backlog in dollars.
+HIGH
+F-03
+Chase-the-failure pattern on Suite 4600-100
+$2,539 of heating repairs in Dec 2025 (intermittent heat, thermostat, roll-out & high-limit switches) preceded a $5,500 compressor replacement on the same unit — money spent repairing an asset already near end-of-life.
+
+ACTION › Apply a repair-vs-replace threshold (e.g. 40% of replacement cost) before authorizing further T&M on units of this vintage.
+MEDIUM
+F-04
+No evident warranty register — risk of paying twice
+The 4600-220 blower motor carries a 1-year parts & labor warranty (exp. ~6/3/27) and the Solace contract carries a 1-year workmanship guarantee on all repairs. Without a tracked register, warrantied failures may be re-billed as new T&M.
+
+ACTION › Stand up a warranty register (part, labor, equipment) cross-referenced to invoice numbers; flag any repeat failure inside a warranty window.
+MEDIUM
+F-05
+Q2 PM documentation thinner than contracted Schedule B scope
+The 5/8 work order reads "check, clean condenser coils, swap filters." The contracted quarterly checklist contains 14+ inspection points per unit type plus logged readings; the narrative does not evidence full execution.
+
+ACTION › Require per-unit checklist completion and amp/voltage readings on each quarterly visit, attached to the invoice, per Exhibit A.
+Prioritized recommendations
+1
+Expedite the approved AC-6 heat-pump replacement; confirm install date, curb-adaptor ETA, and SMUD rebate filing.
+Immediate
+2
+Recover and bid-level the outstanding Q1 Solace estimate; close out or price the deferred-maintenance backlog.
+30 days
+3
+Establish a warranty register cross-referenced to repair invoices to prevent duplicate billing.
+30 days
+4
+Provide 6-month utility history and building square footage so an EUI baseline and energy benchmark can be set.
+Client
+5
+Audit Q2 PM documentation against the Exhibit A / Schedule B checklist; require per-unit readings going forward.
+60 days
+6
+Build a 24-month capital plan for the remaining aging packaged units, sequenced by failure risk and rebate eligibility.
+Planning
+Data gaps — required to complete the baseline
+• 6-month utility history (electric + gas) — EUI/SF not yet computable
+• Building gross & leasable square footage
+• Dollar value of the outstanding Q1 Solace estimate
+• Portal contacts beyond C. Sinclair
+Prepared by HVAC Asset Management as an independent forensic baseline. Figures reconcile to the SRA Northgate general ledger; recommendations do not constitute engineering certification.
+Audit@hvacasset.com
+(877) 239-7716 · CA Lic. #496061
