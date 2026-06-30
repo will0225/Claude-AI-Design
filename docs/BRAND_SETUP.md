@@ -2,6 +2,8 @@
 
 Your client told Claude their brand **22 times** and it still asks. This guide explains why that happens and how this repo fixes it permanently.
 
+> **Claude Design page users:** Start with [DESIGN_PAGE.md](./DESIGN_PAGE.md) — explains why the Design page can't be referenced and how `brand.config.yaml` replaces it.
+
 ---
 
 ## Why Claude keeps asking (even in Projects)

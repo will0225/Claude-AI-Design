@@ -79,6 +79,71 @@ def _section_list(doc_key: str, config: dict) -> str:
     return "\n".join(lines)
 
 
+def export_design_reference(config: dict, doc_type: str | None = None) -> str:
+    """The permanent 'design page' block — injected into every API call."""
+    c = config["company"]
+    colors = config["colors"]
+    fonts = config["fonts"]
+    labels = config.get("document_labels", {})
+    design_id = config.get("design_id", c["name"])
+
+    report_sections = section_specs("report", config)
+    proposal_sections = section_specs("proposal", config)
+
+    def fmt_sections(specs: list[dict]) -> str:
+        return "\n".join(
+            f"    {s.get('number', '')} {s['name']}".strip() for s in specs
+        )
+
+    active_format = ""
+    if doc_type == "report":
+        active_format = f"ACTIVE FORMAT: Report\n{fmt_sections(report_sections)}"
+    elif doc_type == "proposal":
+        active_format = f"ACTIVE FORMAT: Proposal\n{fmt_sections(proposal_sections)}"
+    else:
+        active_format = (
+            f"Report format:\n{fmt_sections(report_sections)}\n"
+            f"Proposal format:\n{fmt_sections(proposal_sections)}"
+        )
+
+    return f"""=== DESIGN PROFILE REFERENCE (ID: {design_id}) ===
+This replaces the Claude.ai Design page. REFERENCE THIS ON EVERY DOCUMENT.
+Do NOT ask the user for colors, fonts, or document format — they are defined here.
+
+COMPANY
+  name: {c['name']}
+  tagline: {c.get('tagline', '')}
+  email: {c.get('contact_email', '')}
+  phone: {c.get('contact_phone', '')}
+  license: {c.get('license', '')}
+
+COLORS (exact hex — CSS must use these values)
+  primary:    {colors['primary']}
+  secondary:  {colors['secondary']}
+  accent:     {colors['accent']}
+  critical:   {colors.get('critical', '#c53030')}
+  high:       {colors.get('high', '#dd6b20')}
+  medium:     {colors.get('medium', '#d69e2e')}
+  text:       {colors['text']}
+  background: {colors['background']}
+  surface:    {colors['surface']}
+  border:     {colors['border']}
+
+FONTS (exact font-family names)
+  headings: {fonts['heading']}
+  body:     {fonts['body']}
+
+DOCUMENT LABELS
+  report type: {labels.get('report_type', 'Report')}
+  confidential: {labels.get('confidential', '')}
+
+FIXED FORMAT (section order never changes)
+{active_format}
+
+LAYOUT RULE: HTML template applies all design. You supply section CONTENT only as JSON.
+=== END DESIGN PROFILE ==="""
+
+
 def build_json_system_prompt(config: dict, doc_type: str) -> str:
     """System prompt that returns structured JSON — rendered into a fixed template."""
     c = config["company"]
@@ -138,7 +203,11 @@ Also include these cover/metadata fields extracted from source material:
     json_schema += ",\n".join(json_keys)
     json_schema += "\n  }\n}"
 
-    return f"""You are a document writer for {c['name']}. Populate a fixed {doc_label.lower()} template from source material.
+    design_block = export_design_reference(config, doc_type)
+
+    return f"""{design_block}
+
+You are a document writer for {c['name']}. Populate a fixed {doc_label.lower()} template from source material.
 
 CRITICAL RULES:
 - NEVER ask the user about: {never_ask}.

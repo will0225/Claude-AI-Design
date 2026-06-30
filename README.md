@@ -10,6 +10,17 @@ Forensic **Standard Review** reports and proposals with a fixed template every t
 3. brand/output/*.html  →  Print → PDF
 ```
 
+## The Design page problem — solved
+
+Claude's **Design page** saves colors/fonts/format in the UI but **cannot reference them** across chats. This repo uses `brand/brand.config.yaml` as your permanent Design page — injected automatically every time.
+
+```bash
+python design.py show      # exactly what Claude receives
+python design.py preview   # visual proof in browser
+```
+
+Full explanation → [docs/DESIGN_PAGE.md](./docs/DESIGN_PAGE.md)
+
 ## One-time setup
 
 ```bash

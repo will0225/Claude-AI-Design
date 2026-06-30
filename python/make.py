@@ -121,6 +121,7 @@ def main() -> None:
 
     client = get_client()
     print(f"✓ {brand_summary(config)}")
+    print(f"✓ Design referenced: {config.get('design_id', 'default')}")
     print(f"✓ Building fixed {args.type} template…\n")
 
     source_path = resolve_input(args.file, from_inbox=not args.file)

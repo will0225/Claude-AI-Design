@@ -59,6 +59,42 @@ export function sectionSpecs(docType, config) {
   }));
 }
 
+export function exportDesignReference(config, docType = null) {
+  const c = config.company;
+  const colors = config.colors;
+  const fonts = config.fonts;
+  const labels = config.document_labels ?? {};
+  const designId = config.design_id ?? c.name;
+  const fmtSections = (specs) =>
+    specs.map((s) => `    ${s.number ? s.number + " " : ""}${s.name}`.trim()).join("\n");
+  const reportSections = sectionSpecs("report", config);
+  const proposalSections = sectionSpecs("proposal", config);
+  let activeFormat;
+  if (docType === "report") {
+    activeFormat = `ACTIVE FORMAT: Report\n${fmtSections(reportSections)}`;
+  } else if (docType === "proposal") {
+    activeFormat = `ACTIVE FORMAT: Proposal\n${fmtSections(proposalSections)}`;
+  } else {
+    activeFormat = `Report format:\n${fmtSections(reportSections)}\nProposal format:\n${fmtSections(proposalSections)}`;
+  }
+  return `=== DESIGN PROFILE REFERENCE (ID: ${designId}) ===
+This replaces the Claude.ai Design page. REFERENCE THIS ON EVERY DOCUMENT.
+Do NOT ask the user for colors, fonts, or document format — they are defined here.
+
+COLORS (exact hex)
+  primary: ${colors.primary}  secondary: ${colors.secondary}  accent: ${colors.accent}
+  text: ${colors.text}  background: ${colors.background}
+
+FONTS
+  headings: ${fonts.heading}  body: ${fonts.body}
+
+FIXED FORMAT
+${activeFormat}
+
+LAYOUT RULE: HTML template applies design. You supply section CONTENT only as JSON.
+=== END DESIGN PROFILE ===`;
+}
+
 export function buildJsonSystemPrompt(config, docType) {
   const c = config.company;
   const style = config.writing_style;
@@ -112,7 +148,11 @@ ${jsonKeys}
   }
 }`;
 
-  return `You are a document writer for ${c.name}. Populate a fixed ${docLabel.toLowerCase()} template from source material.
+  const designBlock = exportDesignReference(config, docType);
+
+  return `${designBlock}
+
+You are a document writer for ${c.name}. Populate a fixed ${docLabel.toLowerCase()} template from source material.
 
 CRITICAL RULES:
 - NEVER ask the user about: ${neverAsk}.

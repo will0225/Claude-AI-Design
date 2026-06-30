@@ -1,9 +1,20 @@
 # =============================================================================
-# HVAC ASSET MANAGEMENT — Brand & document templates
+# PERMANENT DESIGN PAGE — replaces Claude.ai Design settings
 # =============================================================================
-# Copy to brand.config.yaml once:
+# Claude's Design page saves colors/fonts/format in the UI but cannot reference
+# them reliably across chats. THIS FILE is the single design source the scripts
+# inject into every API call automatically.
+#
+# Setup once:
 #   cp brand.config.example.yaml brand.config.yaml
+#   Copy your Design page values (hex colors, font names) into sections below.
+#
+# Verify:
+#   cd python && python design.py show
+#   cd python && python design.py preview
 # =============================================================================
+
+design_id: "hvac-standard-review-v1"
 
 company:
   name: "HVAC Asset Management"
