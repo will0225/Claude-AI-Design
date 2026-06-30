@@ -16,5 +16,10 @@ if [ ! -f python/.env ]; then
 fi
 
 cd python
-pip install -r requirements.txt -q
-python3 web_app.py
+if [ -d "../venv/bin" ]; then
+  ../venv/bin/pip install -r requirements.txt -q
+  ../venv/bin/python web_app.py
+else
+  pip install -r requirements.txt -q
+  python3 web_app.py
+fi

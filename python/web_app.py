@@ -10,15 +10,15 @@ from __future__ import annotations
 
 import os
 import re
-import shutil
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import List, Optional
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -59,7 +59,7 @@ app.add_middleware(
 
 class GenerateRequest(BaseModel):
     doc_type: str  # report | proposal
-    source_name: str | None = None
+    source_name: Optional[str] = None
     use_sample: bool = False
 
 
@@ -114,7 +114,7 @@ def status():
     config = None
     company = "Not configured"
     colors = {}
-    warnings: list[str] = []
+    warnings: List[str] = []
 
     if _config_ok():
         config = load_brand_config()
