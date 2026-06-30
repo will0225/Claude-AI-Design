@@ -18,7 +18,25 @@ Send the client this list 24 hours ahead:
 
 ---
 
-## During the call — step by step
+## Client web UI (recommended for verification)
+
+```bash
+./start-app.sh
+# Browser: http://127.0.0.1:8765
+```
+
+- [ ] Client opens Report Studio in browser (no terminal after start)
+- [ ] **Brand & format preview** shows HAM colors and sections
+- [ ] **Northgate reference report** matches Claude Design layout
+- [ ] Client uploads a `.txt` file via drag-and-drop
+- [ ] **Generate Standard Review Report** produces preview on the right
+- [ ] **Print / Save PDF** works from preview toolbar
+
+See [CLIENT_UI.md](./CLIENT_UI.md) for the full client guide.
+
+---
+
+## During the call — step by step (terminal alternative)
 
 ### 1. Explain why chat failed (3 min)
 

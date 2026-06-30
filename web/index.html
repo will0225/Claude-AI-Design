@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HVAC Asset Management — Report Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@500;600&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <h1>HVAC Asset Management</h1>
+      <div class="tagline">Report Studio · Independent Mechanical Fiduciary</div>
+    </div>
+    <div id="statusPill" class="status-pill not-ready">Checking…</div>
+  </header>
+
+  <main class="layout">
+    <!-- LEFT: Controls -->
+    <aside>
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Create a document</h2>
+          <p>Upload your property notes, then generate a branded report or proposal.</p>
+        </div>
+        <div class="panel-body">
+          <!-- Step 1 -->
+          <div class="step">
+            <div class="step-title"><span class="step-num">1</span>Upload property notes</div>
+            <label class="drop-zone" id="dropZone">
+              <input type="file" id="fileInput" accept=".txt,.md,.csv,.json,.log,.rtf">
+              <div class="icon">📄</div>
+              <strong>Drop your file here</strong>
+              <span>or click to browse · .txt, .md, .csv</span>
+            </label>
+            <div id="fileSelected" class="file-selected"></div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step">
+            <div class="step-title"><span class="step-num">2</span>Choose document type</div>
+            <div class="btn-row">
+              <button class="btn btn-primary" id="btnReport" disabled>
+                Generate Standard Review Report
+              </button>
+              <button class="btn btn-secondary" id="btnProposal" disabled>
+                Generate Proposal
+              </button>
+            </div>
+            <p class="hint">Uses your saved brand colors, fonts, and section format automatically.</p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="step">
+            <div class="step-title"><span class="step-num">3</span>Try without uploading</div>
+            <button class="btn btn-ghost" id="btnSample">Generate sample Northgate report</button>
+            <p class="hint">Demo using the included SRA Northgate H1 2026 data.</p>
+          </div>
+
+          <div id="spinner" class="spinner">Generating your document… this may take 30–60 seconds</div>
+          <div id="alert" class="alert"></div>
+
+          <div class="divider"></div>
+
+          <div class="step-title">View format examples</div>
+          <div class="btn-row">
+            <button class="btn btn-ghost" id="btnFormatPreview">Brand &amp; format preview</button>
+            <button class="btn btn-ghost" id="btnReference">Northgate reference report</button>
+          </div>
+          <div class="brand-swatches">
+            <div class="swatch" id="swatchTeal" title="Teal"></div>
+            <div class="swatch" id="swatchBronze" title="Bronze"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top: 1rem;">
+        <div class="panel-header">
+          <h2>Recent documents</h2>
+          <p>Click a document to preview it</p>
+        </div>
+        <div class="panel-body">
+          <ul id="docList" class="doc-list">
+            <li><span class="doc-meta">Loading…</span></li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT: Preview -->
+    <section class="panel preview-panel">
+      <div class="preview-toolbar">
+        <div class="title" id="previewTitle">Document preview</div>
+        <div class="actions">
+          <button class="btn btn-ghost" id="btnPrint" disabled>Print / Save PDF</button>
+          <button class="btn btn-ghost" id="btnDownload" disabled>Download HTML</button>
+          <button class="btn btn-ghost" id="btnOpenTab" disabled>Open in new tab</button>
+        </div>
+      </div>
+      <div class="preview-frame-wrap">
+        <div id="emptyPreview" class="empty-preview">
+          <h3>No document selected</h3>
+          <p>Generate a report or select one from Recent documents to preview it here.</p>
+          <p style="margin-top:1rem;font-size:0.85rem;">Tip: Use <strong>Brand &amp; format preview</strong> to verify colors and layout first.</p>
+        </div>
+        <iframe id="previewFrame" title="Document preview" hidden></iframe>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

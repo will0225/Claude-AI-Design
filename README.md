@@ -2,7 +2,18 @@
 
 Forensic **Standard Review** reports and proposals with a fixed template every time. Pre-configured for **HVAC Asset Management** using the real SRA Northgate H1 2026 report structure.
 
-## Daily workflow
+## Client web UI (no coding)
+
+For clients who should not use the terminal:
+
+```bash
+./start-app.sh
+# Opens http://127.0.0.1:8765 — upload notes, generate report, preview & print PDF
+```
+
+Full guide → [docs/CLIENT_UI.md](./docs/CLIENT_UI.md)
+
+## Daily workflow (terminal)
 
 ```
 1. Drop downloaded GL notes / work orders  →  brand/inbox/
