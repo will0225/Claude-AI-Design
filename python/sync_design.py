@@ -1,42 +1,25 @@
 #!/usr/bin/env python3
-"""Extract colors/fonts from brand/design/*.dc.html into brand.config.yaml comments."""
+"""Extract colors/fonts from brand/design/*.dc.html into brand.config.yaml."""
 
 from __future__ import annotations
 
-import re
 import sys
 from pathlib import Path
 
 import yaml
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from format_guide import (  # noqa: E402
+    CONFIG_PATH,
+    DEFAULT_DC,
+    extract_css_colors,
+    load_format_guide_html,
+    resolve_format_guide_path,
+    validate_section_alignment,
+)
+
 BRAND_DIR = Path(__file__).resolve().parent.parent / "brand"
-CONFIG = BRAND_DIR / "brand.config.yaml"
-DESIGN_DIR = BRAND_DIR / "design"
-DEFAULT_DC = DESIGN_DIR / "Standard Review - 4600 Northgate.dc.html"
-
-
-def extract_from_html(html: str) -> dict:
-    colors = {}
-    for name, pattern in [
-        ("primary", r"--(?:color-)?primary[^:]*:\s*(#[0-9a-fA-F]{3,8})"),
-        ("secondary", r"--(?:color-)?secondary[^:]*:\s*(#[0-9a-fA-F]{3,8})"),
-        ("accent", r"--(?:color-)?accent[^:]*:\s*(#[0-9a-fA-F]{3,8})"),
-        ("text", r"--(?:color-)?text[^:]*:\s*(#[0-9a-fA-F]{3,8})"),
-    ]:
-        m = re.search(pattern, html)
-        if m:
-            colors[name] = m.group(1)
-
-    fonts = {}
-    for name, pattern in [
-        ("heading", r"--font-heading[^:]*:\s*['\"]?([^;'\"]+)"),
-        ("body", r"--font-body[^:]*:\s*['\"]?([^;'\"]+)"),
-    ]:
-        m = re.search(pattern, html)
-        if m:
-            fonts[name] = m.group(1).split(",")[0].strip("'\"")
-
-    return {"colors": colors, "fonts": fonts}
 
 
 def main() -> None:
@@ -45,31 +28,53 @@ def main() -> None:
         print(f"❌ Not found: {dc}")
         sys.exit(1)
 
-    html = dc.read_text(encoding="utf-8")
-    extracted = extract_from_html(html)
-    print(f"Extracted from {dc.name}:")
-    print(yaml.dump(extracted, default_flow_style=False))
+    config = {}
+    if CONFIG_PATH.exists():
+        config = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8")) or {}
 
-    if not CONFIG.exists():
-        print(f"\nCopy values into {CONFIG} manually.")
+    html = load_format_guide_html(dc, config)
+    extracted = extract_css_colors(html)
+    print(f"Extracted from {dc.name}:")
+    for k, v in sorted(extracted.items()):
+        print(f"  {k}: {v}")
+
+    if not CONFIG_PATH.exists():
+        print(f"\nCopy values into {CONFIG_PATH} manually.")
         return
 
-    config = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
+    colors = config.setdefault("colors", {})
+    alias = {
+        "teal": "primary",
+        "bronze": "accent",
+        "ink": "text",
+        "muted": "text_light",
+        "cream": "surface",
+        "paper": "background",
+    }
     updated = False
-    for k, v in extracted.get("colors", {}).items():
-        if v and config.get("colors", {}).get(k) != v:
-            config.setdefault("colors", {})[k] = v
+    for src, dst in alias.items():
+        if src in extracted and colors.get(dst) != extracted[src]:
+            colors[dst] = extracted[src]
+            colors[src] = extracted[src]
             updated = True
-    for k, v in extracted.get("fonts", {}).items():
-        if v and config.get("fonts", {}).get(k) != v:
-            config.setdefault("fonts", {})[k] = v
+    for key in ("critical", "high", "medium", "positive", "border"):
+        if key in extracted and colors.get(key) != extracted[key]:
+            colors[key] = extracted[key]
             updated = True
 
     if updated:
-        CONFIG.write_text(yaml.dump(config, default_flow_style=False, allow_unicode=True), encoding="utf-8")
-        print(f"✓ Updated {CONFIG}")
+        CONFIG_PATH.write_text(
+            yaml.dump(config, default_flow_style=False, allow_unicode=True, sort_keys=False),
+            encoding="utf-8",
+        )
+        print(f"✓ Updated {CONFIG_PATH}")
     else:
-        print("No config changes needed.")
+        print("No config color changes needed.")
+
+    for w in validate_section_alignment(config, html):
+        print(f"⚠ {w}")
+
+    print("\nRun: python implement_format_guide.py  (sync CSS + HTML shell from .dc.html)")
 
 
 if __name__ == "__main__":

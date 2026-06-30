@@ -370,3 +370,46 @@ footer.doc-footer .footer-contact {
   body { padding-left: var(--text-inset); padding-right: var(--text-inset); }
   section.doc-section, table, .finding-card, .stat-tile, .callout { page-break-inside: avoid; }
 }
+
+/* ---- Format guide utilities (Standard Review) ---- */
+header.doc-header p.file-number {
+  font-family: var(--font-mono);
+  font-size: 9pt;
+  font-weight: 500;
+  color: var(--color-muted);
+  margin: 0.25rem 0 0;
+}
+
+.cover-meta .meta-block { display: flex; flex-direction: column; gap: 0.15rem; }
+
+.note-text {
+  font-size: 10pt;
+  color: var(--color-muted);
+  margin: 0.5rem 0;
+}
+
+table.data-table th.amount,
+table.data-table td.amount,
+th.amount, td.amount {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+tr.total-row td {
+  font-weight: 700;
+  border-top: 1.5px solid var(--color-border);
+}
+
+.finding-body {
+  font-size: 10pt;
+  margin: 0.35rem 0;
+  line-height: 1.55;
+}
+
+.pm-job {
+  font-family: var(--font-mono);
+  font-size: 8pt;
+  color: var(--color-muted);
+  margin-top: 0.25rem;
+}

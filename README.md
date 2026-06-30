@@ -37,8 +37,9 @@ To pull live updates from Claude Design on your machine:
 ```bash
 /design-login                                    # Claude Code
 export DESIGN_OAUTH_TOKEN=$(jq -r '.designOauth.accessToken' ~/.claude/.credentials.json)
-python import_design.py                          # MCP import
+python import_design.py                          # MCP import + auto-implement
 python sync_design.py                            # sync tokens → brand.config.yaml
+python implement_format_guide.py                 # re-apply .dc.html shell/CSS anytime
 ```
 
 Full guide → [docs/DESIGN_MCP_IMPORT.md](./docs/DESIGN_MCP_IMPORT.md)

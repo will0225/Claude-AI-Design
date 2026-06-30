@@ -127,7 +127,14 @@ def main() -> None:
     out = Path(args.out) if args.out else BRAND_DESIGN_DIR / args.file
     out.write_text(content, encoding="utf-8")
     print(f"✓ Saved: {out}")
-    print("  Run: python sync_design.py  (to extract colors/fonts into brand.config.yaml)")
+
+    try:
+        from implement_format_guide import apply_format_guide
+
+        apply_format_guide(out)
+    except Exception as exc:
+        print(f"⚠ Auto-implement skipped: {exc}")
+        print("  Run: python implement_format_guide.py")
 
 
 if __name__ == "__main__":

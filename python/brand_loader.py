@@ -79,6 +79,18 @@ def _section_list(doc_key: str, config: dict) -> str:
     return "\n".join(lines)
 
 
+def load_format_guide_excerpt(config: dict) -> str:
+    """HTML patterns from the Claude Design .dc.html format guide."""
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from format_guide import format_guide_prompt_excerpt, load_format_guide_html, resolve_format_guide_path
+
+        html = load_format_guide_html(resolve_format_guide_path(config), config)
+        return format_guide_prompt_excerpt(html)
+    except Exception as exc:
+        return f"FORMAT GUIDE: (reference file unavailable — {exc})"
+
+
 def export_design_reference(config: dict, doc_type: str | None = None) -> str:
     """The permanent 'design page' block — injected into every API call."""
     c = config["company"]
@@ -106,9 +118,16 @@ def export_design_reference(config: dict, doc_type: str | None = None) -> str:
             f"Proposal format:\n{fmt_sections(proposal_sections)}"
         )
 
+    format_block = load_format_guide_excerpt(config)
+    cd = config.get("claude_design", {})
+    design_file = cd.get("reference_file") or cd.get("local_path", "")
+
     return f"""=== DESIGN PROFILE REFERENCE (ID: {design_id}) ===
 This replaces the Claude.ai Design page. REFERENCE THIS ON EVERY DOCUMENT.
 Do NOT ask the user for colors, fonts, or document format — they are defined here.
+
+CLAUDE DESIGN FORMAT GUIDE: {design_file}
+Project: {cd.get('project_url', '')}
 
 COMPANY
   name: {c['name']}
@@ -140,6 +159,8 @@ DOCUMENT LABELS
 
 FIXED FORMAT (section order never changes)
 {active_format}
+
+{format_block}
 
 LAYOUT RULE: HTML template applies all design. You supply section CONTENT only as JSON.
 === END DESIGN PROFILE ==="""
@@ -184,6 +205,7 @@ Also include these cover/metadata fields extracted from source material:
   - property_contact (name and phone)
   - review_period
   - issued_date
+  - prepared_by (usually company name)
 """
         json_cover = """
   "file_number": "string",
@@ -193,7 +215,8 @@ Also include these cover/metadata fields extracted from source material:
   "prepared_for": "string",
   "property_contact": "string",
   "review_period": "string",
-  "issued_date": "string","""
+  "issued_date": "string",
+  "prepared_by": "string","""
 
     html_patterns = config.get("report_html_patterns", "")
     patterns_block = f"\nHTML PATTERNS:\n{html_patterns}\n" if html_patterns and doc_type == "report" else ""
@@ -280,6 +303,7 @@ def render_fixed_document(config: dict, doc_type: str, payload: dict) -> str:
         "{{PROPERTY_CONTACT}}": payload.get("property_contact", ""),
         "{{REVIEW_PERIOD}}": payload.get("review_period", ""),
         "{{ISSUED_DATE}}": payload.get("issued_date", date.today().strftime("%b %d, %Y")),
+        "{{PREPARED_BY}}": payload.get("prepared_by", c["name"]),
         "{{SECTIONS}}": sections_html,
         "{{FOOTER_DISCLAIMER}}": labels.get("footer_disclaimer", ""),
         "{{CONTACT_EMAIL}}": c.get("contact_email", ""),

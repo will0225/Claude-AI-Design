@@ -86,9 +86,11 @@ Output saves to: `brand/design/Standard Review - 4600 Northgate.dc.html`
 
 ---
 
-## Step 4 — Sync tokens into brand config
+## Step 4 — Implement as format guide
 
 ```bash
+python implement_format_guide.py
+# Syncs CSS + HTML shell from .dc.html → document.css + fixed_document.html
 python sync_design.py
 # Reads CSS variables from .dc.html → updates brand/brand.config.yaml
 ```
@@ -128,6 +130,7 @@ To refresh from Design when MCP works:
 
 ```bash
 python import_design.py   # overwrites with live Design file
+python implement_format_guide.py
 python sync_design.py     # re-extract tokens
 ```
 

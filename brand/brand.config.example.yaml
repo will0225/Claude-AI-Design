@@ -14,6 +14,10 @@ claude_design:
   local_path: "brand/design/Standard Review - 4600 Northgate.dc.html"
   style_guide: "brand/HAM_Report_Style_Guide.pdf"
 
+format_guide:
+  source: "brand/design/Standard Review - 4600 Northgate.dc.html"
+  role: "Canonical Standard Review layout from Claude Design — implement with python implement_format_guide.py"
+
 company:
   name: "HVAC Asset Management"
   tagline: "Independent Mechanical Fiduciary"

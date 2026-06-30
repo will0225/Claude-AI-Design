@@ -59,6 +59,7 @@ def cmd_preview(config: dict) -> None:
         "property_contact": "Preview Contact · 000-000-0000",
         "review_period": "Preview Period",
         "issued_date": "Preview Date",
+        "prepared_by": config["company"]["name"],
         "sections": {
             s["slug"]: (
                 f'<p><strong>Design loaded.</strong> Section <em>{s["name"]}</em> '
