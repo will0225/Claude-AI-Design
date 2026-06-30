@@ -16,6 +16,13 @@
 
 design_id: "hvac-standard-review-v1"
 
+# Claude Design project — source of truth for colors, fonts, layout
+claude_design:
+  project_id: "575aeb46-b224-4fc6-9f4d-29bacdbcf962"
+  project_url: "https://claude.ai/design/p/575aeb46-b224-4fc6-9f4d-29bacdbcf962"
+  reference_file: "Standard Review - 4600 Northgate.dc.html"
+  local_path: "brand/design/Standard Review - 4600 Northgate.dc.html"
+
 company:
   name: "HVAC Asset Management"
   tagline: "Forensic Asset & Spend Review"

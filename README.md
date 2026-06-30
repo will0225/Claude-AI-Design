@@ -10,6 +10,27 @@ Forensic **Standard Review** reports and proposals with a fixed template every t
 3. brand/output/*.html  →  Print → PDF
 ```
 
+## Claude Design import (MCP)
+
+Your Design page project is configured in `brand.config.example.yaml`:
+
+- Project: `575aeb46-b224-4fc6-9f4d-29bacdbcf962`
+- File: `Standard Review - 4600 Northgate.dc.html`
+
+**Reference implementation (committed):** `brand/design/Standard Review - 4600 Northgate.dc.html`  
+Open in browser to see exact colors, fonts, and Standard Review format.
+
+To pull live updates from Claude Design on your machine:
+
+```bash
+/design-login                                    # Claude Code
+export DESIGN_OAUTH_TOKEN=$(jq -r '.designOauth.accessToken' ~/.claude/.credentials.json)
+python import_design.py                          # MCP import
+python sync_design.py                            # sync tokens → brand.config.yaml
+```
+
+Full guide → [docs/DESIGN_MCP_IMPORT.md](./docs/DESIGN_MCP_IMPORT.md)
+
 ## The Design page problem — solved
 
 Claude's **Design page** saves colors/fonts/format in the UI but **cannot reference them** across chats. This repo uses `brand/brand.config.yaml` as your permanent Design page — injected automatically every time.
@@ -63,7 +84,8 @@ python generate_document.py --show-brand
 | Guide | Purpose |
 |-------|---------|
 | [docs/WORKFLOW.md](./docs/WORKFLOW.md) | Daily drop-and-run steps |
-| [docs/BRAND_SETUP.md](./docs/BRAND_SETUP.md) | Colors, fonts, section customization |
+| [docs/DESIGN_MCP_IMPORT.md](./docs/DESIGN_MCP_IMPORT.md) | Import from Claude Design MCP |
+| [docs/DESIGN_PAGE.md](./docs/DESIGN_PAGE.md) | Why Design page can't be referenced in chat |
 | [docs/HANDOFF_CHECKLIST.md](./docs/HANDOFF_CHECKLIST.md) | Client verification call |
 
 ## Sample data

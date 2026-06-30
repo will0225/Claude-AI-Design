@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HVAC Asset Management — 4600 Northgate Boulevard · Sacramento, CA</title>
+  <style>
+@import url("https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&display=swap");
+
+:root {
+  --color-primary: #0f2744;
+  --color-secondary: #1a4480;
+  --color-accent: #c05621;
+  --color-critical: #c53030;
+  --color-high: #dd6b20;
+  --color-medium: #d69e2e;
+  --color-text: #1a202c;
+  --color-text-light: #4a5568;
+  --color-background: #ffffff;
+  --color-surface: #f7fafc;
+  --color-border: #e2e8f0;
+  --font-heading: "Libre Franklin", system-ui, sans-serif;
+  --font-body: "Source Sans 3", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 11pt;
+  line-height: 1.6;
+  color: var(--color-text);
+  background: var(--color-background);
+  max-width: 8.5in;
+  margin: 0 auto;
+  padding: 0.75in;
+}
+
+header.doc-header {
+  border-bottom: 3px solid var(--color-primary);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+header.doc-header p.confidential {
+  font-family: var(--font-heading);
+  font-size: 8pt;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-critical);
+  margin: 0 0 0.75rem 0;
+}
+
+header.doc-header p.doc-type {
+  font-family: var(--font-heading);
+  font-size: 9pt;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin: 0 0 0.35rem 0;
+}
+
+header.doc-header h1.company-name {
+  font-family: var(--font-heading);
+  font-size: 22pt;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0 0 0.25rem 0;
+  letter-spacing: 0.02em;
+}
+
+header.doc-header p.file-number {
+  font-family: var(--font-heading);
+  font-size: 8.5pt;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-light);
+  margin: 0 0 0.5rem 0;
+}
+
+header.doc-header p.property-address {
+  font-family: var(--font-heading);
+  font-size: 13pt;
+  font-weight: 600;
+  color: var(--color-secondary);
+  margin: 0.5rem 0 0.25rem 0;
+}
+
+header.doc-header p.subtitle {
+  font-size: 10pt;
+  color: var(--color-text-light);
+  line-height: 1.5;
+  margin: 0 0 1.25rem 0;
+  max-width: 42rem;
+}
+
+.cover-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem 1.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-primary);
+  padding: 1rem 1.25rem;
+  font-size: 9pt;
+}
+
+.cover-meta .meta-label {
+  display: block;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-light);
+  font-size: 7.5pt;
+  margin-bottom: 0.15rem;
+}
+
+.cover-meta .meta-value {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+section.doc-section {
+  margin-bottom: 1.75rem;
+  page-break-inside: avoid;
+}
+
+section.doc-section h2 {
+  font-family: var(--font-heading);
+  font-size: 14pt;
+  color: var(--color-primary);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.25rem;
+  margin-top: 1.75rem;
+}
+
+section.doc-section h2 .section-num {
+  color: var(--color-accent);
+  margin-right: 0.35rem;
+}
+
+section.doc-section h3 {
+  font-family: var(--font-heading);
+  font-size: 12pt;
+  color: var(--color-secondary);
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+section.doc-section .section-body p {
+  margin: 0.75rem 0;
+}
+
+section.doc-section .section-body ul {
+  margin: 0.5rem 0;
+  padding-left: 1.25rem;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+}
+
+.kpi-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-top: 3px solid var(--color-primary);
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.kpi-card .kpi-label {
+  font-size: 8pt;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-light);
+  margin-bottom: 0.25rem;
+}
+
+.kpi-card .kpi-value {
+  font-family: var(--font-heading);
+  font-size: 14pt;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.kpi-card .kpi-sub {
+  font-size: 8pt;
+  color: var(--color-text-light);
+  margin-top: 0.15rem;
+}
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 9pt;
+}
+
+table.data-table th {
+  background: var(--color-primary);
+  color: #fff;
+  font-family: var(--font-heading);
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+}
+
+table.data-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+
+table.data-table tr:nth-child(even) td {
+  background: var(--color-surface);
+}
+
+table.data-table td.amount,
+table.data-table th.amount {
+  text-align: right;
+  white-space: nowrap;
+}
+
+table.data-table tfoot td {
+  font-weight: 600;
+  border-top: 2px solid var(--color-primary);
+  background: var(--color-surface);
+}
+
+table.data-table tr.total-row td {
+  font-weight: 600;
+  border-top: 2px solid var(--color-primary);
+  background: var(--color-surface);
+}
+
+.callout {
+  background: var(--color-surface);
+  border-left: 4px solid var(--color-accent);
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+  font-size: 9.5pt;
+}
+
+.callout .callout-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.35rem;
+  font-size: 10pt;
+}
+
+.callout .callout-stat {
+  font-family: var(--font-heading);
+  font-size: 16pt;
+  font-weight: 700;
+  color: var(--color-secondary);
+}
+
+.callout .callout-detail {
+  font-size: 9pt;
+  color: var(--color-text-light);
+  margin-top: 0.25rem;
+}
+
+.pm-block {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 0.85rem 1rem;
+  margin: 0.75rem 0;
+}
+
+.pm-block .pm-header {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-secondary);
+  font-size: 10pt;
+  margin-bottom: 0.35rem;
+}
+
+.pm-block .pm-job {
+  font-size: 8.5pt;
+  color: var(--color-text-light);
+  margin-bottom: 0.5rem;
+}
+
+.finding {
+  border-left: 4px solid var(--color-border);
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  background: var(--color-surface);
+}
+
+.finding-critical { border-left-color: var(--color-critical); }
+.finding-high { border-left-color: var(--color-high); }
+.finding-medium { border-left-color: var(--color-medium); }
+
+.finding .finding-id {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 9pt;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: block;
+}
+
+.finding-critical .finding-id { color: var(--color-critical); }
+.finding-high .finding-id { color: var(--color-high); }
+.finding-medium .finding-id { color: var(--color-medium); }
+
+.finding .finding-title {
+  font-weight: 600;
+  margin: 0.25rem 0;
+}
+
+.finding .finding-body {
+  font-size: 9.5pt;
+  margin: 0.35rem 0;
+}
+
+.finding .finding-action {
+  font-size: 9pt;
+  margin-top: 0.5rem;
+  color: var(--color-secondary);
+  font-weight: 600;
+}
+
+.flag-critical, .flag-high {
+  font-size: 8pt;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.4rem;
+  display: inline-block;
+  margin: 0.5rem 0 0 0;
+}
+
+.flag-critical { background: #fed7d7; color: var(--color-critical); }
+.flag-high { background: #feebc8; color: var(--color-high); }
+
+.comfort-block {
+  border: 1px solid var(--color-border);
+  margin: 1rem 0;
+  page-break-inside: avoid;
+}
+
+.comfort-block .comfort-header {
+  padding: 0.65rem 1rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 9pt;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.comfort-block.chronic .comfort-header {
+  background: #fed7d7;
+  color: var(--color-critical);
+  border-bottom: 2px solid var(--color-critical);
+}
+
+.comfort-block.resolved .comfort-header {
+  background: #c6f6d5;
+  color: #276749;
+  border-bottom: 2px solid #276749;
+}
+
+.comfort-block .comfort-meta {
+  padding: 0.5rem 1rem;
+  font-size: 9pt;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-light);
+}
+
+.comfort-block .comfort-meta strong {
+  color: var(--color-text);
+}
+
+.timeline {
+  margin: 0;
+  padding: 0.5rem 1rem 0.75rem 1.5rem;
+  border-left: none;
+}
+
+.timeline-item {
+  position: relative;
+  padding: 0.35rem 0 0.35rem 0.75rem;
+  border-left: 2px solid var(--color-border);
+  margin-left: 0.5rem;
+  font-size: 9.5pt;
+}
+
+.timeline-item:last-child {
+  border-left-color: transparent;
+}
+
+.timeline-item .visit-date {
+  font-weight: 600;
+  color: var(--color-secondary);
+  font-size: 9pt;
+  display: inline-block;
+  min-width: 3.5rem;
+}
+
+.data-gaps {
+  margin-top: 1.25rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  font-size: 9pt;
+}
+
+.data-gaps h3 {
+  margin-top: 0;
+  font-size: 10pt;
+}
+
+.data-gaps ul {
+  margin: 0.5rem 0 0 0;
+  padding-left: 1.25rem;
+}
+
+.note-text {
+  font-size: 9pt;
+  color: var(--color-text-light);
+  font-style: italic;
+  margin-top: 0.5rem;
+}
+
+footer.doc-footer {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 9pt;
+  color: var(--color-text-light);
+}
+
+footer.doc-footer .footer-disclaimer {
+  font-size: 8pt;
+  color: var(--color-text-light);
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+footer.doc-footer .footer-contact {
+  font-size: 9pt;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+footer.doc-footer .footer-contact a {
+  color: var(--color-secondary);
+  text-decoration: none;
+}
+
+@media print {
+  body {
+    padding: 0;
+    max-width: none;
+  }
+
+  header.doc-header {
+    page-break-after: avoid;
+  }
+
+  section.doc-section {
+    page-break-inside: avoid;
+  }
+
+  section.doc-section h2 {
+    page-break-after: avoid;
+  }
+
+  table.data-table {
+    page-break-inside: auto;
+  }
+
+  table.data-table tr {
+    page-break-inside: avoid;
+  }
+
+  .kpi-grid {
+    page-break-inside: avoid;
+  }
+
+  a {
+    color: var(--color-text);
+  }
+}
+  </style>
+</head>
+<body>
+  <header class="doc-header">
+    <p class="confidential">CONFIDENTIAL · CLIENT EYES ONLY</p>
+    <p class="doc-type">Forensic Asset &amp; Spend Review</p>
+    <h1 class="company-name">HVAC Asset Management</h1>
+    <p class="file-number">File No. SR-4600NOR-H1-26</p>
+    <p class="property-address">4600 Northgate Boulevard · Sacramento, CA</p>
+    <p class="subtitle">A forensic baseline of HVAC operating spend, vendor standard-of-care, equipment risk, and tenant comfort for the review period — built to surface inefficiencies, validate vendor performance, and protect net operating income.</p>
+
+    <div class="cover-meta">
+      <div class="meta-block">
+        <span class="meta-label">Prepared for</span>
+        <span class="meta-value">SRA Northgate, LP<br>c/o Seagate Properties</span>
+      </div>
+      <div class="meta-block">
+        <span class="meta-label">Property mgr</span>
+        <span class="meta-value">Chetta Sinclair · 916-809-1705</span>
+      </div>
+      <div class="meta-block">
+        <span class="meta-label">Review period</span>
+        <span class="meta-value">Jan – Jun 2026 · Cash basis · H1</span>
+      </div>
+      <div class="meta-block">
+        <span class="meta-label">Issued</span>
+        <span class="meta-value">Jun 29, 2026</span>
+      </div>
+      <div class="meta-block">
+        <span class="meta-label">Review type</span>
+        <span class="meta-value">Standard Review</span>
+      </div>
+      <div class="meta-block">
+        <span class="meta-label">Prepared by</span>
+        <span class="meta-value">HVAC Asset Management</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="doc-body">
+
+    <section class="doc-section" id="executive_summary">
+      <h2><span class="section-num">00</span>Executive Summary</h2>
+      <div class="section-body">
+        <p>Over the first half of 2026 the 4600 building absorbed $11,093 in HVAC operating spend against a $2,876 contracted PM baseline — a 2.9× ratio of reactive repair to preventive maintenance. Spend is concentrated in two suites with aging packaged units. One unit (Suite 4600-120, AC-6) is a chronic failure now approved for heat-pump replacement after $2,444 of May repairs; a $9,000 SMUD rebate was successfully captured on a prior replacement. The forensic flags below center on deferred PM items converting into emergency repairs and an outstanding, un-leveled vendor estimate from the Q1 inspection.</p>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Operating spend · H1</div>
+            <div class="kpi-value">$11,093</div>
+            <div class="kpi-sub">PM $2,876 · R&amp;M $8,217</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Capital replaced · net</div>
+            <div class="kpi-value">$38,292</div>
+            <div class="kpi-sub">4 units · gross $47,292</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Rebate captured</div>
+            <div class="kpi-value">$9,000</div>
+            <div class="kpi-sub">SMUD · Suite 240</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Reactive : preventive</div>
+            <div class="kpi-value">2.9×</div>
+            <div class="kpi-sub">R&amp;M vs PM contract</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Comfort complaints</div>
+            <div class="kpi-value">2 suites</div>
+            <div class="kpi-sub">8 visits · 1 chronic</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Forensic findings</div>
+            <div class="kpi-value">1 critical</div>
+            <div class="kpi-sub">+ 2 high · 2 medium</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section" id="financial_contractual_baseline">
+      <h2><span class="section-num">01</span>Financial &amp; Contractual Baseline</h2>
+      <div class="section-body">
+        <p>HVAC spend for the 4600 building, by cost category, drawn from the SRA Northgate general ledger (cash book, Jan–Jun 2026). Operating categories are separated from capitalized equipment replacement.</p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Cost category</th>
+              <th>GL account</th>
+              <th class="amount">H1 2026</th>
+              <th>Basis</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Preventive maintenance (contract)</td>
+              <td>6420-0200</td>
+              <td class="amount">$2,876.00</td>
+              <td>2 of 4 quarterly installments</td>
+            </tr>
+            <tr>
+              <td>Repair &amp; maintenance (T&amp;M)</td>
+              <td>6420-0360</td>
+              <td class="amount">$8,217.05</td>
+              <td>9 work orders · 6 suites</td>
+            </tr>
+            <tr class="total-row">
+              <td colspan="2">Operating subtotal</td>
+              <td class="amount">$11,093.05</td>
+              <td>expensed</td>
+            </tr>
+            <tr>
+              <td>Equipment replacement</td>
+              <td>1515-0000</td>
+              <td class="amount">$47,292.00</td>
+              <td>4 units · capitalized</td>
+            </tr>
+            <tr>
+              <td>SMUD rebate (Suite 240)</td>
+              <td>—</td>
+              <td class="amount">($9,000.00)</td>
+              <td>credit received</td>
+            </tr>
+            <tr class="total-row">
+              <td colspan="2">Total HVAC investment</td>
+              <td class="amount">$49,385.05</td>
+              <td>operating + net capital</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="note-text">Capital replacements reflect units placed in service over the trailing ~15 months (Mar 2025 – Jun 2026); operating figures are H1 2026 only.</p>
+
+        <h3>Repair &amp; maintenance detail — where the reactive dollars went</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Suite</th>
+              <th>Work performed</th>
+              <th>Vendor</th>
+              <th class="amount">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>12/01</td>
+              <td>4600-100</td>
+              <td>Assess intermittent heating</td>
+              <td>Solace</td>
+              <td class="amount">$633.75</td>
+            </tr>
+            <tr>
+              <td>12/08</td>
+              <td>4600-100</td>
+              <td>Replace thermostat / troubleshoot</td>
+              <td>Solace</td>
+              <td class="amount">$1,220.98</td>
+            </tr>
+            <tr>
+              <td>12/23</td>
+              <td>4600-100</td>
+              <td>Replace roll-out &amp; high-limit switches</td>
+              <td>Solace</td>
+              <td class="amount">$683.91</td>
+            </tr>
+            <tr>
+              <td>01/26</td>
+              <td>4600-145</td>
+              <td>Evaporator coil cleaning</td>
+              <td>Solace</td>
+              <td class="amount">$401.66</td>
+            </tr>
+            <tr>
+              <td>02/02</td>
+              <td>4600-135</td>
+              <td>Change thermostat batteries</td>
+              <td>UG2</td>
+              <td class="amount">$150.00</td>
+            </tr>
+            <tr>
+              <td>04/15</td>
+              <td>4600-207</td>
+              <td>No heat — replace fuse</td>
+              <td>Solace</td>
+              <td class="amount">$517.75</td>
+            </tr>
+            <tr>
+              <td>05/18</td>
+              <td>4600-120</td>
+              <td>Replace capacitor &amp; blower motor (no heat)</td>
+              <td>Solace</td>
+              <td class="amount">$2,131.50</td>
+            </tr>
+            <tr>
+              <td>05/28</td>
+              <td>4600-120</td>
+              <td>2nd-opinion assessment (repair vs replace)</td>
+              <td>Comfort Mech.</td>
+              <td class="amount">$312.50</td>
+            </tr>
+            <tr>
+              <td>06/03</td>
+              <td>4600-220</td>
+              <td>Blower motor replacement (AC-19)</td>
+              <td>Solace</td>
+              <td class="amount">$2,165.00</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4">Total R&amp;M — H1 2026</td>
+              <td class="amount">$8,217.05</td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <div class="callout">
+          <div class="callout-title">Active service agreement</div>
+          <p style="margin: 0.35rem 0 0.5rem 0;"><strong>Solace Enterprises, Inc.</strong> — 2026 Quarterly PM<br>
+          Term Jan 1 – Dec 31, 2026, covering all six buildings (4600–4650). Preventive maintenance only — repairs &amp; replacements are explicitly excluded and billed separately on approved proposals. One-year workmanship guarantee on repairs.</p>
+          <div class="callout-stat">$21,630/yr</div>
+          <div class="callout-detail">4 × $5,407.50 · portfolio-wide</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section" id="vendor_performance_standard_of_care_audit">
+      <h2><span class="section-num">02</span>Vendor Performance &amp; Standard-of-Care Audit</h2>
+      <div class="section-body">
+        <p>Solace Enterprises holds both the PM contract and the majority of reactive repair work — a concentration that warrants independent verification of scope compliance and bid competitiveness. Two other vendors appear in the period.</p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Vendor</th>
+              <th>Role this period</th>
+              <th>Engagements</th>
+              <th class="amount">Spend (H1)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Solace Enterprises, Inc.</td>
+              <td>PM contract + primary repairs</td>
+              <td>PM + 7 WOs</td>
+              <td class="amount">$10,630.55</td>
+            </tr>
+            <tr>
+              <td>Comfort Mechanical, LLC</td>
+              <td>2nd-opinion diagnostic (AC-6)</td>
+              <td>1</td>
+              <td class="amount">$312.50</td>
+            </tr>
+            <tr>
+              <td>UG2 LLC</td>
+              <td>Minor repair (tstat batteries)</td>
+              <td>1</td>
+              <td class="amount">$150.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Quarterly PM execution vs. contracted scope</h3>
+
+        <div class="pm-block">
+          <div class="pm-header">Q1 — Feb 16–18, 2026</div>
+          <div class="pm-job">Job #118617643</div>
+          <p style="margin: 0; font-size: 9.5pt;">Full mechanical inspection + filter replacement, all six buildings. Technician flagged multiple deficiencies with "estimate to follow": pitted 24V contactors (4600-130, -110; 4640-165), AC#13 inducer-motor bearings scraping (4600-207), seized inducer bearings + belt (4620-120), gas valve not opening + buzzing transformer (4630-150).</p>
+          <span class="flag-critical">Estimate not found in GL — see Finding F-02</span>
+        </div>
+
+        <div class="pm-block">
+          <div class="pm-header">Q2 — May 5–8, 2026</div>
+          <div class="pm-job">Job #125221066 · Technician B. Gill</div>
+          <p style="margin: 0; font-size: 9.5pt;">Technician logged: "check, mechanical, clean condenser coils, swap filters." The contracted Schedule B quarterly checklist contains 14+ inspection points per unit type; the Q2 work-order narrative does not evidence the full checklist or per-unit readings.</p>
+          <span class="flag-high">Documentation gap — see Finding F-05</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section" id="asset_equipment_risk_capital_plan">
+      <h2><span class="section-num">03</span>Asset &amp; Equipment Risk + Capital Plan</h2>
+      <div class="section-body">
+        <p>Four packaged units have been replaced over the trailing ~15 months and a fifth is approved — evidence of a fleet entering end-of-life. Suite 4600-100 shows a classic chase-the-failure pattern: $2,539 of heating repairs in Dec 2025 preceding a $5,500 compressor replacement.</p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Placed</th>
+              <th>Unit</th>
+              <th>Suite</th>
+              <th>Scope</th>
+              <th class="amount">Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Mar 2025</td>
+              <td>AC14</td>
+              <td>4600-210</td>
+              <td>Full replacement</td>
+              <td class="amount">$11,370</td>
+            </tr>
+            <tr>
+              <td>Apr 2025</td>
+              <td>AC22</td>
+              <td>4600-211</td>
+              <td>Full replacement</td>
+              <td class="amount">$13,499</td>
+            </tr>
+            <tr>
+              <td>2025</td>
+              <td>AC#4</td>
+              <td>4600-100</td>
+              <td>Failed compressor</td>
+              <td class="amount">$5,500</td>
+            </tr>
+            <tr>
+              <td>Dec 2025</td>
+              <td>AC20</td>
+              <td>4600-240</td>
+              <td>Full replacement · rebate captured</td>
+              <td class="amount">$16,923</td>
+            </tr>
+            <tr>
+              <td>Pending</td>
+              <td>AC-6</td>
+              <td>4600-120</td>
+              <td>Heat-pump replacement — approved 6/3, awaiting curb adaptor</td>
+              <td class="amount">TBD</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="note-text">AC-6 transition to a heat pump continues the SMUD rebate-eligible electrification path established on Suite 240.</p>
+      </div>
+    </section>
+
+    <section class="doc-section" id="comfort_reliability_hot_cold_calls">
+      <h2><span class="section-num">04</span>Comfort &amp; Reliability — Hot / Cold Calls</h2>
+      <div class="section-body">
+        <p>Two suites generated comfort complaints in the period. One is a chronic, multi-visit failure now headed to replacement; the other was resolved in a single repair under warranty.</p>
+
+        <div class="comfort-block chronic">
+          <div class="comfort-header">Chronic · Suite 4600-120 · AC-6 · Choice Parenteral Nutrition</div>
+          <div class="comfort-meta"><strong>$2,444 spent → replacement</strong></div>
+          <div class="timeline">
+            <div class="timeline-item">
+              <span class="visit-date">05/18</span>
+              Temp rising while calling for cooling. Weak capacitor replaced; blower motor then failed and was replaced. Left operating.
+            </div>
+            <div class="timeline-item">
+              <span class="visit-date">05/22</span>
+              Trouble cooling again — coils frozen over; unit shut off to defrost.
+            </div>
+            <div class="timeline-item">
+              <span class="visit-date">05/26</span>
+              Low charge; schrader valves replaced. TXV failing (no work done). Replacement strongly recommended due to age.
+            </div>
+            <div class="timeline-item">
+              <span class="visit-date">05/28</span>
+              2nd opinion (Comfort Mechanical): condenser coil plugged, heat-exchanger pit marks, heavy rust on evaporator coil. Replacement strongly recommended.
+            </div>
+            <div class="timeline-item">
+              <span class="visit-date">06/03</span>
+              Replacement approved — transition to heat pump, SMUD rebate path.
+            </div>
+            <div class="timeline-item">
+              <span class="visit-date">06/15</span>
+              Still pending — vendor has the unit, awaiting curb adaptor. Tenant comfort exposure continues.
+            </div>
+          </div>
+        </div>
+
+        <div class="comfort-block resolved">
+          <div class="comfort-header">Resolved · Suite 4600-220 · AC-19 · Cleanlyte</div>
+          <div class="comfort-meta"><strong>1-yr parts &amp; labor warranty</strong></div>
+          <div class="timeline">
+            <div class="timeline-item">
+              <span class="visit-date">06/02</span>
+              W-side office string not turning on — failed blower motor diagnosed.
+            </div>
+            <div class="timeline-item">
+              <span class="visit-date">06/03</span>
+              Blower motor replaced; operating normally. 1-year parts &amp; labor warranty — log for recovery.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section" id="findings_exposure_recommendations">
+      <h2><span class="section-num">05</span>Findings, Exposure &amp; Recommendations</h2>
+      <div class="section-body">
+
+        <div class="finding finding-critical">
+          <span class="finding-id">Critical · F-01</span>
+          <div class="finding-title">Chronic unit kept in service while spend accumulated (Suite 4600-120, AC-6)</div>
+          <div class="finding-body">Five service visits in 19 days and $2,444 of May repairs preceded the replacement decision. A medical tenant (Choice Parenteral Nutrition) carried comfort risk throughout; as of 6/15 the approved replacement is still pending a curb adaptor.</div>
+          <div class="finding-action">ACTION › Expedite install — obtain firm date and curb-adaptor ETA from Solace; confirm heat-pump model and SMUD rebate registration before work proceeds.</div>
+        </div>
+
+        <div class="finding finding-high">
+          <span class="finding-id">High · F-02</span>
+          <div class="finding-title">Q1 PM deficiencies flagged "estimate to follow" — no matching estimate or repair found in the GL</div>
+          <div class="finding-body">The 2/16 inspection identified pitted contactors, scraping/seized inducer bearings, a non-opening gas valve and a buzzing transformer across several suites. No corresponding proposal or R&amp;M invoice for those specific items appears in the period ledger; some later no-heat / no-cool emergencies trace to the same equipment.</div>
+          <div class="finding-action">ACTION › Pull the Solace Q1 estimate, bid-level it, and close or formally defer each line — quantify the deferred-maintenance backlog in dollars.</div>
+        </div>
+
+        <div class="finding finding-high">
+          <span class="finding-id">High · F-03</span>
+          <div class="finding-title">Chase-the-failure pattern on Suite 4600-100</div>
+          <div class="finding-body">$2,539 of heating repairs in Dec 2025 (intermittent heat, thermostat, roll-out &amp; high-limit switches) preceded a $5,500 compressor replacement on the same unit — money spent repairing an asset already near end-of-life.</div>
+          <div class="finding-action">ACTION › Apply a repair-vs-replace threshold (e.g. 40% of replacement cost) before authorizing further T&amp;M on units of this vintage.</div>
+        </div>
+
+        <div class="finding finding-medium">
+          <span class="finding-id">Medium · F-04</span>
+          <div class="finding-title">No evident warranty register — risk of paying twice</div>
+          <div class="finding-body">The 4600-220 blower motor carries a 1-year parts &amp; labor warranty (exp. ~6/3/27) and the Solace contract carries a 1-year workmanship guarantee on all repairs. Without a tracked register, warrantied failures may be re-billed as new T&amp;M.</div>
+          <div class="finding-action">ACTION › Stand up a warranty register (part, labor, equipment) cross-referenced to invoice numbers; flag any repeat failure inside a warranty window.</div>
+        </div>
+
+        <div class="finding finding-medium">
+          <span class="finding-id">Medium · F-05</span>
+          <div class="finding-title">Q2 PM documentation thinner than contracted Schedule B scope</div>
+          <div class="finding-body">The 5/8 work order reads "check, clean condenser coils, swap filters." The contracted quarterly checklist contains 14+ inspection points per unit type plus logged readings; the narrative does not evidence full execution.</div>
+          <div class="finding-action">ACTION › Require per-unit checklist completion and amp/voltage readings on each quarterly visit, attached to the invoice, per Exhibit A.</div>
+        </div>
+
+        <h3>Prioritized recommendations</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Recommendation</th>
+              <th>Timeline</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Expedite the approved AC-6 heat-pump replacement; confirm install date, curb-adaptor ETA, and SMUD rebate filing.</td>
+              <td>Immediate</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Recover and bid-level the outstanding Q1 Solace estimate; close out or price the deferred-maintenance backlog.</td>
+              <td>30 days</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Establish a warranty register cross-referenced to repair invoices to prevent duplicate billing.</td>
+              <td>30 days</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Provide 6-month utility history and building square footage so an EUI baseline and energy benchmark can be set.</td>
+              <td>Client</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Audit Q2 PM documentation against the Exhibit A / Schedule B checklist; require per-unit readings going forward.</td>
+              <td>60 days</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>Build a 24-month capital plan for the remaining aging packaged units, sequenced by failure risk and rebate eligibility.</td>
+              <td>Planning</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="data-gaps">
+          <h3>Data gaps — required to complete the baseline</h3>
+          <ul>
+            <li>6-month utility history (electric + gas) — EUI/SF not yet computable</li>
+            <li>Building gross &amp; leasable square footage</li>
+            <li>Dollar value of the outstanding Q1 Solace estimate</li>
+            <li>Portal contacts beyond C. Sinclair</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="doc-footer">
+    <p class="footer-disclaimer">Prepared by HVAC Asset Management as an independent forensic baseline. Figures reconcile to the SRA Northgate general ledger; recommendations do not constitute engineering certification.</p>
+    <p class="footer-contact"><a href="mailto:Audit@hvacasset.com">Audit@hvacasset.com</a> &nbsp;|&nbsp; (877) 239-7716 &nbsp;|&nbsp; CA Lic. #496061</p>
+  </footer>
+</body>
+</html>
