@@ -5,7 +5,8 @@
 import sys
 from pathlib import Path
 
-ROOT = Path(SPECPATH).parent.parent
+# SPECPATH = .../Claude-AI-Design/build  →  repo root is one level up
+ROOT = Path(SPECPATH).parent
 
 a = Analysis(
     [str(ROOT / 'python' / 'desktop_app.py')],
