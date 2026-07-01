@@ -23,7 +23,7 @@ if __name__ == "__main__":
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from app_paths import APP_NAME, ensure_user_setup, init_paths, is_frozen  # noqa: E402
-from desktop_launcher import fatal_error, log, log_path, setup_frozen, show_error  # noqa: E402
+from desktop_launcher import UVICORN_LOG_CONFIG, fatal_error, log, log_path, setup_frozen, show_error  # noqa: E402
 
 
 def _free_port() -> int:
@@ -62,6 +62,7 @@ def _run_server(port: int, error_box: list) -> None:
             port=port,
             log_level="warning",
             access_log=False,
+            log_config=UVICORN_LOG_CONFIG,
         )
     except Exception as exc:
         error_box.append(exc)

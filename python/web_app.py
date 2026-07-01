@@ -302,6 +302,9 @@ if web_dir.joinpath("static").exists():
 def main() -> None:
     import uvicorn
 
+    from desktop_launcher import UVICORN_LOG_CONFIG, fix_stdio
+
+    fix_stdio()
     init_paths()
     ensure_user_setup()
     apply_brand_loader_paths()
@@ -314,7 +317,7 @@ def main() -> None:
         print(f"  ⚠ Brand config: {CONFIG_PATH}")
     if not api_key_configured():
         print("  ⚠ Add API key in the app Settings screen\n")
-    uvicorn.run(app, host=host, port=port, log_level="info")
+    uvicorn.run(app, host=host, port=port, log_level="info", log_config=UVICORN_LOG_CONFIG)
 
 
 if __name__ == "__main__":

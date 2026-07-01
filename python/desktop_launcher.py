@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 import os
 import sys
 import traceback
@@ -10,9 +11,43 @@ from typing import Optional
 
 APP_NAME = "HAM Report Studio"
 
+# Uvicorn default logging calls stream.isatty() — fails when stdout/stderr are None (Windows .exe)
+UVICORN_LOG_CONFIG = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "default": {
+            "()": "uvicorn.logging.DefaultFormatter",
+            "fmt": "%(levelprefix)s %(message)s",
+            "use_colors": False,
+        },
+    },
+    "handlers": {
+        "default": {
+            "formatter": "default",
+            "class": "logging.StreamHandler",
+            "stream": "ext://sys.stderr",
+        },
+    },
+    "loggers": {
+        "uvicorn": {"handlers": ["default"], "level": "WARNING", "propagate": False},
+        "uvicorn.error": {"handlers": ["default"], "level": "WARNING", "propagate": False},
+        "uvicorn.access": {"handlers": ["default"], "level": "WARNING", "propagate": False},
+    },
+}
+
+
+def fix_stdio() -> None:
+    """PyInstaller windowed apps on Windows have sys.stdout/stderr = None."""
+    if sys.stdout is None:
+        sys.stdout = io.TextIOWrapper(open(os.devnull, "wb"), encoding="utf-8", errors="replace")
+    if sys.stderr is None:
+        sys.stderr = io.TextIOWrapper(open(os.devnull, "wb"), encoding="utf-8", errors="replace")
+
 
 def setup_frozen() -> None:
     """Required for PyInstaller on Windows."""
+    fix_stdio()
     if getattr(sys, "frozen", False):
         exe_dir = Path(sys.executable).resolve().parent
         os.chdir(exe_dir)
