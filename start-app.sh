@@ -1,25 +1,28 @@
 #!/bin/bash
-# Start the client web UI — one command, no coding required.
+# Start Report Studio — native window or browser
 set -e
 cd "$(dirname "$0")"
 
-if [ ! -f brand/brand.config.yaml ]; then
-  echo "First-time setup: copying brand config…"
+if [ ! -f brand/brand.config.yaml ] && [ -f brand/brand.config.example.yaml ]; then
   cp brand/brand.config.example.yaml brand/brand.config.yaml
-fi
-
-if [ ! -f python/.env ]; then
-  echo ""
-  echo "⚠  Add your API key: copy python/.env.example to python/.env"
-  echo "   You can still preview the format without a key."
-  echo ""
 fi
 
 cd python
 if [ -d "../venv/bin" ]; then
-  ../venv/bin/pip install -r requirements.txt -q
-  ../venv/bin/python web_app.py
+  PY="../venv/bin/python"
+  PIP="../venv/bin/pip"
 else
-  pip install -r requirements.txt -q
-  python3 web_app.py
+  PY="python3"
+  PIP="pip"
+fi
+
+$PIP install -r requirements.txt -q
+$PIP install pywebview -q 2>/dev/null || true
+
+# Prefer native desktop window when pywebview is available
+if $PY -c "import webview" 2>/dev/null; then
+  $PY desktop_app.py
+else
+  echo "Tip: pip install pywebview for a native app window"
+  $PY web_app.py
 fi

@@ -2,16 +2,30 @@
 
 Forensic **Standard Review** reports and proposals with a fixed template every time. Pre-configured for **HVAC Asset Management** using the real SRA Northgate H1 2026 report structure.
 
-## Client web UI (no coding)
+## Client desktop app (Mac & Windows — recommended)
 
-For clients who should not use the terminal:
+Build a **double-click app** for your client (no Terminal, no Python):
+
+| Platform | Build on | Output |
+|----------|----------|--------|
+| **Mac** | macOS | `dist/HAM Report Studio.app` |
+| **Windows** | Windows | `dist/HAM Report Studio/HAM Report Studio.exe` |
+
+```bash
+./build/build-mac.sh          # Mac only
+# build\build-windows.bat     # Windows only
+```
+
+Client adds API key once in **Settings** inside the app.
+
+Full guide → [docs/DESKTOP_APP.md](./docs/DESKTOP_APP.md)
+
+## Client web UI (browser — dev / fallback)
 
 ```bash
 ./start-app.sh
-# Opens http://127.0.0.1:8765 — upload notes, generate report, preview & print PDF
+# Opens native window (or browser) at http://127.0.0.1:8765
 ```
-
-Full guide → [docs/CLIENT_UI.md](./docs/CLIENT_UI.md)
 
 ## Daily workflow (terminal)
 

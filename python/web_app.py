@@ -4,6 +4,9 @@ Client web UI — no terminal required.
 
   cd python && python web_app.py
   Open http://127.0.0.1:8765
+
+Desktop app (native window):
+  python desktop_app.py
 """
 
 from __future__ import annotations
@@ -22,11 +25,24 @@ from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-load_dotenv(Path(__file__).resolve().parent / ".env")
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from app_paths import (  # noqa: E402
+    api_key_configured,
+    apply_brand_loader_paths,
+    ensure_user_setup,
+    init_paths,
+    masked_api_key,
+    reference_dc,
+    sample_source,
+    save_api_key,
+    web_dir,
+)
+
+ensure_user_setup()
+apply_brand_loader_paths()
+
 from brand_loader import (  # noqa: E402
-    BRAND_DIR,
     CONFIG_PATH,
     EXAMPLE_PATH,
     INBOX_DIR,
@@ -42,10 +58,6 @@ from brand_loader import (  # noqa: E402
 from design import cmd_preview  # noqa: E402
 from make import DEFAULT_MODEL, get_client, save_output  # noqa: E402
 
-ROOT = Path(__file__).resolve().parent.parent
-WEB_DIR = ROOT / "web"
-REFERENCE_DC = BRAND_DIR / "design" / "Standard Review - 4600 Northgate.dc.html"
-SAMPLE_SOURCE = BRAND_DIR / "samples" / "sra-northgate-h1-2026-source.txt"
 ALLOWED_UPLOAD = {".txt", ".md", ".csv", ".json", ".log", ".rtf"}
 
 app = FastAPI(title="HVAC Asset Management — Report Studio", version="1.0.0")
@@ -63,9 +75,8 @@ class GenerateRequest(BaseModel):
     use_sample: bool = False
 
 
-def _api_key_ok() -> bool:
-    key = os.getenv("ANTHROPIC_API_KEY", "")
-    return bool(key and not key.startswith("sk-ant-api03-xxx"))
+class ApiKeyRequest(BaseModel):
+    api_key: str
 
 
 def _config_ok() -> bool:
@@ -79,7 +90,7 @@ def _safe_name(name: str) -> str:
     return base
 
 
-def _list_documents() -> list[dict]:
+def _list_documents() -> list:
     if not OUTPUT_DIR.exists():
         return []
     docs = []
@@ -95,7 +106,7 @@ def _list_documents() -> list[dict]:
     return docs
 
 
-def _list_inbox() -> list[dict]:
+def _list_inbox() -> list:
     INBOX_DIR.mkdir(parents=True, exist_ok=True)
     files = []
     for p in sorted(INBOX_DIR.iterdir(), key=lambda x: x.stat().st_mtime, reverse=True):
@@ -125,21 +136,46 @@ def status():
         }
         warnings = validate_brand_config(config)
     else:
-        warnings.append("Brand not set up — copy brand.config.example.yaml to brand.config.yaml")
+        warnings.append("Brand not set up")
+
+    from app_paths import user_data, is_frozen
 
     return {
-        "ready": _config_ok() and _api_key_ok(),
+        "ready": _config_ok() and api_key_configured(),
         "company": company,
         "colors": colors,
-        "api_key_set": _api_key_ok(),
+        "api_key_set": api_key_configured(),
+        "api_key_masked": masked_api_key(),
         "config_set": _config_ok(),
         "brand_summary": brand_summary(config) if config else "",
         "warnings": warnings,
         "documents": _list_documents(),
         "inbox_files": _list_inbox(),
-        "has_reference": REFERENCE_DC.exists(),
-        "has_sample": SAMPLE_SOURCE.exists(),
+        "has_reference": reference_dc.exists(),
+        "has_sample": sample_source.exists(),
+        "desktop_mode": is_frozen(),
+        "data_folder": str(user_data),
     }
+
+
+@app.get("/api/settings")
+def get_settings():
+    from app_paths import user_data
+
+    return {
+        "api_key_set": api_key_configured(),
+        "api_key_masked": masked_api_key(),
+        "data_folder": str(user_data),
+    }
+
+
+@app.post("/api/settings/api-key")
+def set_api_key(req: ApiKeyRequest):
+    key = req.api_key.strip()
+    if not key.startswith("sk-ant-"):
+        raise HTTPException(400, "Invalid API key format")
+    save_api_key(key)
+    return {"ok": True, "message": "API key saved", "api_key_masked": masked_api_key()}
 
 
 @app.post("/api/upload")
@@ -162,20 +198,14 @@ def generate(req: GenerateRequest):
     if req.doc_type not in ("report", "proposal"):
         raise HTTPException(400, "Document type must be report or proposal")
     if not _config_ok():
-        raise HTTPException(
-            503,
-            "Brand not configured. Ask your administrator to run setup once.",
-        )
-    if not _api_key_ok():
-        raise HTTPException(
-            503,
-            "API key not set. Add ANTHROPIC_API_KEY to python/.env",
-        )
+        raise HTTPException(503, "Brand not configured.")
+    if not api_key_configured():
+        raise HTTPException(503, "Add your Anthropic API key in Settings.")
 
     if req.use_sample:
-        if not SAMPLE_SOURCE.exists():
+        if not sample_source.exists():
             raise HTTPException(404, "Sample file not found")
-        source_path = SAMPLE_SOURCE
+        source_path = sample_source
     elif req.source_name:
         source_path = INBOX_DIR / _safe_name(req.source_name)
         if not source_path.exists():
@@ -252,34 +282,38 @@ def download_document(filename: str):
 
 @app.get("/reference")
 def reference_design():
-    if not REFERENCE_DC.exists():
+    if not reference_dc.exists():
         raise HTTPException(404, "Reference design not found")
-    return FileResponse(REFERENCE_DC, media_type="text/html")
+    return FileResponse(reference_dc, media_type="text/html")
 
 
 @app.get("/")
 def index():
-    index_path = WEB_DIR / "index.html"
+    index_path = web_dir / "index.html"
     if not index_path.exists():
         return HTMLResponse("<h1>Web UI not found</h1>", status_code=500)
     return FileResponse(index_path)
 
 
-if WEB_DIR.joinpath("static").exists():
-    app.mount("/static", StaticFiles(directory=WEB_DIR / "static"), name="static")
+if web_dir.joinpath("static").exists():
+    app.mount("/static", StaticFiles(directory=web_dir / "static"), name="static")
 
 
 def main() -> None:
     import uvicorn
+
+    init_paths()
+    ensure_user_setup()
+    apply_brand_loader_paths()
 
     host = os.getenv("HAM_UI_HOST", "127.0.0.1")
     port = int(os.getenv("HAM_UI_PORT", "8765"))
     print(f"\n  HVAC Asset Management — Report Studio")
     print(f"  Open in your browser: http://{host}:{port}\n")
     if not _config_ok():
-        print(f"  ⚠ Copy {EXAMPLE_PATH} → {CONFIG_PATH}")
-    if not _api_key_ok():
-        print("  ⚠ Add ANTHROPIC_API_KEY to python/.env\n")
+        print(f"  ⚠ Brand config: {CONFIG_PATH}")
+    if not api_key_configured():
+        print("  ⚠ Add API key in the app Settings screen\n")
     uvicorn.run(app, host=host, port=port, log_level="info")
 
 

@@ -45,20 +45,33 @@ function showPreview(url, title, filename) {
 async function refreshStatus() {
   try {
     const data = await api("/api/status");
-    systemReady = data.ready;
 
     const pill = $("statusPill");
     if (data.ready) {
       pill.textContent = "Ready to generate";
       pill.className = "status-pill ready";
+    } else if (!data.api_key_set) {
+      pill.textContent = "API key needed";
+      pill.className = "status-pill not-ready";
+      $("btnReport").disabled = !currentFile;
+      $("btnProposal").disabled = !currentFile;
+      $("btnSample").disabled = false;
+      if ($("apiKeyHint")) {
+        $("apiKeyHint").textContent = data.api_key_masked
+          ? `Saved key: ${data.api_key_masked} — enter a new key to replace.`
+          : "Add your Anthropic API key in Settings below to generate reports.";
+      }
     } else if (!data.config_set) {
       pill.textContent = "Setup needed";
       pill.className = "status-pill not-ready";
       showAlert("One-time setup required. Ask your administrator to configure the app.", "error");
-    } else if (!data.api_key_set) {
-      pill.textContent = "API key needed";
-      pill.className = "status-pill not-ready";
-      showAlert("API key not configured. Add your Anthropic key to python/.env", "error");
+    }
+
+    systemReady = data.ready;
+    if (data.ready || data.api_key_set) {
+      $("btnReport").disabled = !currentFile;
+      $("btnProposal").disabled = !currentFile;
+      $("btnSample").disabled = false;
     }
 
     if (data.colors?.teal) $("swatchTeal").style.background = data.colors.teal;
@@ -201,6 +214,26 @@ $("btnDownload").addEventListener("click", () => {
 
 $("btnOpenTab").addEventListener("click", () => {
   if (currentViewUrl) window.open(currentViewUrl, "_blank");
+});
+
+$("btnSaveKey").addEventListener("click", async () => {
+  const key = $("apiKeyInput").value.trim();
+  if (!key) {
+    showAlert("Paste your API key first.", "error");
+    return;
+  }
+  try {
+    const data = await api("/api/settings/api-key", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ api_key: key }),
+    });
+    $("apiKeyInput").value = "";
+    showAlert(data.message + (data.api_key_masked ? ` (${data.api_key_masked})` : ""), "success");
+    refreshStatus();
+  } catch (e) {
+    showAlert(e.message, "error");
+  }
 });
 
 refreshStatus();
