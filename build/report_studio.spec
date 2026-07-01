@@ -5,7 +5,6 @@
 import sys
 from pathlib import Path
 
-# SPECPATH = .../Claude-AI-Design/build  →  repo root is one level up
 ROOT = Path(SPECPATH).parent
 
 a = Analysis(
@@ -35,16 +34,28 @@ a = Analysis(
         'yaml',
         'dotenv',
         'pydantic',
+        'pydantic_core',
         'starlette.routing',
+        'starlette.responses',
+        'starlette.middleware',
+        'starlette.middleware.cors',
         'anyio',
+        'anyio._backends',
+        'anyio._backends._asyncio',
         'sniffio',
         'httpx',
         'httpcore',
         'h11',
+        'multipart',
+        'python_multipart',
+        'tkinter',
+        'tkinter.ttk',
+        'asyncio',
+        'logging.config',
     ],
     hookspath=[],
     hooksconfig={},
-    runtime_hooks=[],
+    runtime_hooks=[str(ROOT / 'build' / 'runtime_hook.py')],
     excludes=[],
     noarchive=False,
     optimize=0,

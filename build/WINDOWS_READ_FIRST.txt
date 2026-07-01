@@ -1,0 +1,20 @@
+HAM Report Studio — IMPORTANT
+
+Do NOT move HAM Report Studio.exe out of this folder.
+
+This app needs ALL files in this folder to run:
+  - HAM Report Studio.exe
+  - _internal\  (required — contains the app)
+
+To install:
+  1. Copy this ENTIRE folder to the PC (e.g. Desktop\HAM Report Studio)
+  2. Double-click HAM Report Studio.exe
+  3. Browser opens → Settings → paste API key → generate reports
+
+If nothing happens when you double-click:
+  - Make sure _internal folder is present next to the .exe
+  - Check log: %LOCALAPPDATA%\HAM Report Studio\report-studio.log
+  - Ask your administrator for "HAM Report Studio Debug" build to see errors
+
+Reports save to:
+  %APPDATA%\HAM Report Studio\brand\output\

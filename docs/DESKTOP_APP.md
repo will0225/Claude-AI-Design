@@ -65,7 +65,24 @@ build\build-windows.bat
 
 Output: **`dist\HAM Report Studio\`** folder containing **`HAM Report Studio.exe`**
 
-Zip the whole folder and send to the client.
+**Important:** Zip and send the **entire folder**, including **`_internal\`**.  
+The `.exe` alone will not work — double-clicking it will appear to do nothing.
+
+A **`READ FIRST.txt`** is copied into the build folder as a reminder.
+
+#### If nothing happens when double-clicking the .exe
+
+1. Confirm **`_internal\`** folder sits next to **`HAM Report Studio.exe`**
+2. Check the log file:
+   ```
+   %LOCALAPPDATA%\HAM Report Studio\report-studio.log
+   ```
+3. Rebuild and run the **debug** version to see errors in a console window:
+   ```cmd
+   build\build-windows-debug.bat
+   dist\HAM Report Studio Debug\HAM Report Studio Debug.exe
+   ```
+4. If Windows SmartScreen blocked it, click **More info** → **Run anyway**
 
 ---
 
@@ -111,6 +128,7 @@ The client enters the key in the app **Settings** screen. It is stored locally i
 |-------|-----|
 | Mac says "unidentified developer" | Right-click app → Open → Open |
 | Windows SmartScreen | Click "More info" → Run anyway (or code-sign the exe) |
+| **Windows: exe does nothing** | Zip must include **`_internal\`** folder; see log at `%LOCALAPPDATA%\HAM Report Studio\report-studio.log` |
 | Blank window | Wait 5 sec; server may still be starting |
 | Generate fails | Check API key in Settings |
 
