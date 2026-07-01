@@ -40,8 +40,6 @@ a = Analysis(
         'httpx',
         'httpcore',
         'h11',
-        'webview',
-        'webview.platforms',
     ],
     hookspath=[],
     hooksconfig={},

@@ -1,2 +1,5 @@
 pyinstaller>=6.0.0
-pywebview>=5.0.0
+
+# Optional (native embedded window — requires Xcode Command Line Tools on Mac):
+#   xcode-select --install
+#   pip install pywebview>=5.0.0

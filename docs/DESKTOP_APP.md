@@ -38,7 +38,21 @@ chmod +x build/build-mac.sh
 
 Output: **`dist/HAM Report Studio.app`**
 
-Zip it or copy to the client's Applications folder.
+The build **does not require pywebview**. If Xcode Command Line Tools are missing, the app opens Report Studio in the default browser and shows a small control window — this is fine for clients.
+
+#### If build fails with `pyobjc-core` / `Cannot locate a working compiler`
+
+This happens when pip tries to compile optional native-window dependencies. The updated build script skips them automatically.
+
+To fix completely (optional native embedded window):
+
+```bash
+xcode-select --install          # install Apple compiler (one time)
+rm -rf build/venv-build dist    # clean previous failed build
+./build/build-mac.sh            # rebuild
+```
+
+You do **not** need pywebview for the client — browser mode works fully.
 
 ### Windows (.exe)
 
