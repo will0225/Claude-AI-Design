@@ -79,6 +79,32 @@ class ApiKeyRequest(BaseModel):
     api_key: str
 
 
+def _anthropic_error_message(exc: Exception) -> str:
+    """Turn Anthropic SDK errors into client-friendly messages."""
+    name = type(exc).__name__
+    body = str(exc)
+
+    if "PermissionDeniedError" in name or "403" in body:
+        return (
+            "Anthropic rejected the API request (403 Forbidden).\n\n"
+            "Common fixes:\n"
+            "• Create a NEW key at https://console.anthropic.com/settings/keys\n"
+            "• Paste it in Settings → Save API key\n"
+            "• Confirm billing is active on the Anthropic account\n"
+            "• Use an API key (starts with sk-ant-api03-), not a Claude login\n"
+            "• If the key was shared publicly, revoke it and create a new one"
+        )
+    if "AuthenticationError" in name or "401" in body:
+        return (
+            "Invalid API key (401).\n\n"
+            "Create a new key at https://console.anthropic.com/settings/keys "
+            "and save it in Settings."
+        )
+    if "RateLimitError" in name or "429" in body:
+        return "Anthropic rate limit reached. Wait a minute and try again."
+    return f"Anthropic API error: {body}"
+
+
 def _config_ok() -> bool:
     return CONFIG_PATH.exists()
 

@@ -236,4 +236,18 @@ $("btnSaveKey").addEventListener("click", async () => {
   }
 });
 
+$("btnTestKey").addEventListener("click", async () => {
+  hideAlert();
+  setLoading(true);
+  try {
+    const data = await api("/api/settings/test-key", { method: "POST" });
+    showAlert(data.message, "success");
+    refreshStatus();
+  } catch (e) {
+    showAlert(e.message, "error");
+  } finally {
+    setLoading(false);
+  }
+});
+
 refreshStatus();
